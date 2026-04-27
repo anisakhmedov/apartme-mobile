@@ -1,120 +1,55 @@
 import React, { useState } from "react";
-import { View, StyleSheet, KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import Animated, { FadeIn, SlideInRight } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
-import { PrimaryButton, TextField } from "@/components/ui";
-
-const forgotSchema = z.object({
-  email: z.string().min(1, "Введите email").email("Неверный формат email"),
-});
-
-type ForgotFormData = z.infer<typeof forgotSchema>;
+import { AppScreen, PrimaryButton, ScreenScroll, TextField } from "@/components/ui";
+import { colors, radii, spacing, typography } from "@/theme";
 
 export function ForgotPasswordScreen() {
   const navigation = useNavigation<any>();
-  const [sent, setSent] = useState(false);
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
 
-  const { control, handleSubmit, formState: { errors, isValid } } = useForm<ForgotFormData>({
-    resolver: zodResolver(forgotSchema),
-    mode: "onChange",
-  });
+  const handleSubmit = async () => {
+    if (!email.trim()) {
+      return;
+    }
 
-  const onSubmit = async (data: ForgotFormData) => {
     setLoading(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setSent(true);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    } finally {
-      setLoading(false);
-    }
+    await new Promise((resolve) => setTimeout(resolve, 900));
+    setLoading(false);
+    setSent(true);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={styles.container}
-      enableOnAndroid
-      extraScrollHeight={20}
-    >
-      <Animated.View entering={FadeIn.duration(400)} style={styles.header}>
-        <Animated.Text style={styles.title}>Забыли пароль?</Animated.Text>
-        <Animated.Text style={styles.subtitle}>
-          Введите email, и мы отправим ссылку для сброса пароля
-        </Animated.Text>
-      </Animated.View>
+    <AppScreen>
+      <ScreenScroll contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Забыли пароль?</Text>
+          <Text style={styles.subtitle}>Введите email, и мы отправим ссылку для сброса пароля</Text>
+        </View>
 
-      {sent ? (
-        <Animated.View entering={FadeIn.duration(400)} style={styles.successContainer}>
-          <Animated.Text style={styles.successTitle}>Письмо отправлено!</Animated.Text>
-          <Animated.Text style={styles.successText}>
-            Проверьте вашу почту и следуйте инструкциям в письме
-          </Animated.Text>
-          <Animated.View entering={SlideInRight.duration(400).delay(200)} style={styles.buttonContainer}>
-            <PrimaryButton
-              label="Вернуться к входу"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                navigation.navigate("Login");
-              }}
-            />
-          </Animated.View>
-        </Animated.View>
-      ) : (
-        <Animated.View entering={SlideInRight.duration(400).delay(100)} style={styles.form}>
-          <Controller
-            control={control}
-            name="email"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View style={styles.fieldContainer}>
-                <TextField
-                  label="Email"
-                  placeholder="email@example.com"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  error={errors.email?.message}
-                />
-              </View>
-            )}
-          />
-
-          <Animated.View entering={FadeIn.duration(400).delay(300)} style={styles.buttonContainer}>
-            <PrimaryButton
-              label={loading ? "" : "Отправить ссылку"}
-              onPress={handleSubmit(onSubmit)}
-              loading={loading}
-              disabled={!isValid}
-            />
-          </Animated.View>
-
-          <Animated.View entering={FadeIn.duration(400).delay(400)} style={styles.backContainer}>
-            <Animated.Text
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                navigation.goBack();
-              }}
-              style={styles.backLink}
-            >
-              ← Вернуться к входу
-            </Animated.Text>
-          </Animated.View>
-        </Animated.View>
-      )}
-    </KeyboardAwareScrollView>
+        {sent ? (
+          <View style={styles.successContainer}>
+            <Text style={styles.successTitle}>Письмо отправлено</Text>
+            <Text style={styles.successText}>Проверьте почту и следуйте инструкциям в письме.</Text>
+            <PrimaryButton label="Вернуться к входу" onPress={() => navigation.navigate("Login")} />
+          </View>
+        ) : (
+          <View style={styles.form}>
+            <TextField label="Email" placeholder="email@example.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+            <PrimaryButton label={loading ? "Отправка..." : "Отправить ссылку"} onPress={handleSubmit} loading={loading} disabled={!email.trim()} />
+            <Pressable onPress={() => navigation.goBack()} style={styles.backLinkWrap} accessibilityRole="button">
+              <Text style={styles.backLink}>← Вернуться к входу</Text>
+            </Pressable>
+          </View>
+        )}
+      </ScreenScroll>
+    </AppScreen>
   );
 }
 
@@ -126,54 +61,41 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
-    marginBottom: 40,
+    marginBottom: spacing.xl,
   },
   title: {
-    fontSize: 28,
-    fontWeight: "500",
+    ...typography.title,
     color: colors.textPrimary,
-    marginBottom: 8,
+    marginBottom: spacing.xs,
   },
   subtitle: {
-    fontSize: 15,
-    fontWeight: "400",
+    ...typography.body,
     color: colors.textSecondary,
-    lineHeight: 22,
   },
   form: {
     gap: spacing.md,
   },
-  fieldContainer: {
-    marginBottom: spacing.md,
-  },
-  buttonContainer: {
-    marginTop: spacing.md,
-  },
-  backContainer: {
-    alignItems: "center",
-    marginTop: 24,
-  },
-  backLink: {
-    fontSize: 15,
-    color: colors.primary,
-    fontWeight: "500",
-  },
   successContainer: {
-    alignItems: "center",
-    padding: spacing.xl,
+    backgroundColor: colors.surface,
+    borderRadius: radii.modal,
+    padding: spacing.lg,
+    gap: spacing.md,
   },
   successTitle: {
-    fontSize: 22,
-    fontWeight: "500",
+    ...typography.heading,
     color: colors.success,
-    marginBottom: 12,
-    textAlign: "center",
   },
   successText: {
-    fontSize: 15,
+    ...typography.body,
     color: colors.textSecondary,
-    lineHeight: 22,
-    textAlign: "center",
-    marginBottom: 32,
+  },
+  backLinkWrap: {
+    alignItems: "center",
+    paddingVertical: spacing.sm,
+  },
+  backLink: {
+    ...typography.body,
+    color: colors.primary,
+    fontWeight: "600",
   },
 });

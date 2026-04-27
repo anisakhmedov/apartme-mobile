@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { Pressable, View, StyleSheet } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -28,15 +28,15 @@ export function WriteReviewScreen() {
         <View style={styles.starsRow}>
           {[1, 2, 3, 4, 5].map((star) => (
             <Animated.View key={star} entering={FadeIn.delay(star * 100).duration(300)}>
-              <RatingStars
-                rating={star}
-                count={undefined}
+              <Pressable
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   setRating(star);
                 }}
                 style={styles.star}
-              />
+              >
+                <RatingStars rating={star} count={undefined} />
+              </Pressable>
             </Animated.View>
           ))}
         </View>

@@ -16,6 +16,8 @@ export interface PreferencesState {
   biometric: boolean;
 }
 
+type StoredPreferences = Omit<PreferencesState, "hydrated">;
+
 const initialState: PreferencesState = {
   hydrated: false,
   language: "ru",
@@ -29,10 +31,20 @@ const initialState: PreferencesState = {
 
 export const bootstrapPreferences = createAsyncThunk("preferences/bootstrap", async () => {
   const raw = await AsyncStorage.getItem(PREF_KEY);
-  return raw ? (JSON.parse(raw) as PreferencesState) : initialState;
+  return raw
+    ? (JSON.parse(raw) as StoredPreferences)
+    : {
+        language: initialState.language,
+        currency: initialState.currency,
+        darkMode: initialState.darkMode,
+        pushBookings: initialState.pushBookings,
+        pushMessages: initialState.pushMessages,
+        pushPromotions: initialState.pushPromotions,
+        biometric: initialState.biometric,
+      };
 });
 
-export const persistPreferences = createAsyncThunk("preferences/persist", async (state: PreferencesState) => {
+export const persistPreferences = createAsyncThunk("preferences/persist", async (state: StoredPreferences) => {
   await AsyncStorage.setItem(PREF_KEY, JSON.stringify(state));
   return state;
 });
@@ -58,11 +70,19 @@ const preferencesSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(bootstrapPreferences.fulfilled, (state, action) => ({ ...state, ...action.payload, hydrated: true }));
+    builder.addCase(bootstrapPreferences.fulfilled, (state, action) => ({
+      ...state,
+      ...action.payload,
+      hydrated: true,
+    }));
     builder.addCase(bootstrapPreferences.rejected, (state) => {
       state.hydrated = true;
     });
-    builder.addCase(persistPreferences.fulfilled, (state, action) => ({ ...state, ...action.payload }));
+    builder.addCase(persistPreferences.fulfilled, (state, action) => ({
+      ...state,
+      ...action.payload,
+      hydrated: true,
+    }));
   }
 });
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { useNavigation, useNavigationParent } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 
 import { colors, spacing } from "@/theme";
@@ -10,7 +10,6 @@ import { useItemLanguage } from "./index";
 
 export function MyListingsScreen() {
   const navigation = useNavigation<any>();
-  const parentNavigation = useNavigationParent();
   const language = useItemLanguage();
   const hostProperties = properties; // Mock: all properties for demo
 
@@ -36,10 +35,7 @@ export function MyListingsScreen() {
             language={language}
             onPress={() => {
               // Navigate to edit listing
-              parentNavigation?.navigate("HostFlow", {
-                screen: "AddEditListing",
-                params: { id: property.id }
-              });
+              navigation.navigate("AddEditListing", { id: property.id });
             }}
           />
         </Animated.View>
@@ -49,9 +45,7 @@ export function MyListingsScreen() {
         <PrimaryButton
           label="Добавить обьект"
           onPress={() => {
-            parentNavigation?.navigate("HostFlow", {
-              screen: "AddEditListing"
-            });
+            navigation.navigate("AddEditListing");
           }}
         />
       </Animated.View>

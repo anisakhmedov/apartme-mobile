@@ -1,26 +1,23 @@
-import React, { useState, useRef } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import React, { useState } from "react";
+import { FlatList, View, StyleSheet, Dimensions } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   interpolate,
   Extrapolate,
-  withSpring,
-  withTiming,
   FadeIn,
-  FadeOut,
 } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { colors } from "@/theme";
-import { PrimaryButton, SecondaryButton, GhostButton } from "@/components/ui";
+import { PrimaryButton, SecondaryButton } from "@/components/ui";
 import { useResponsive } from "@/components/ui";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList) as typeof FlatList;
 
 interface Slide {
   id: string;
@@ -87,7 +84,7 @@ export function OnboardingScreen() {
       {/* Skip button - hidden on last slide */}
       {currentIndex < slides.length - 1 && (
         <Animated.View entering={FadeIn} style={styles.skipContainer}>
-          <GhostButton label="Пропустить" onPress={handleSkip} />
+          <SecondaryButton label="Пропустить" onPress={handleSkip} />
         </Animated.View>
       )}
 

@@ -1,6 +1,6 @@
 import React from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-import { useNavigation, useNavigationParent } from "@react-navigation/native";
+import { View, StyleSheet, FlatList, Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
@@ -13,7 +13,7 @@ import { formatTime } from "./index";
 
 export function NotificationsScreen() {
   const navigation = useNavigation<any>();
-  const parentNavigation = useNavigationParent();
+  const parentNavigation = useNavigation<any>();
   const { data = mockNotifications } = useGetNotificationsQuery();
   const language = useItemLanguage();
 

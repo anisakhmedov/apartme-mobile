@@ -1,187 +1,179 @@
-import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import * as SecureStore from "expo-secure-store";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
-import { colors } from "@/theme";
-import { useResponsive } from "@/components/ui";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-  FadeIn,
-  FadeOut,
-  runOnJS
-} from "react-native-reanimated";
+import { AppScreen, PrimaryButton, SecondaryButton } from "@/components/ui";
+import { colors, radii, spacing, typography } from "@/theme";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { setLanguage } from "@/store/preferencesSlice";
+import i18n from "@/i18n";
 
-const AnimatedPressable = Animated.createAnimatedComponent(View);
+const languages = [
+  { code: "ru", flag: "🇷🇺", label: "RU" },
+  { code: "en", flag: "🇬🇧", label: "EN" },
+  { code: "uz", flag: "🇺🇿", label: "UZ" },
+] as const;
 
 export function SplashScreen() {
   const navigation = useNavigation<any>();
-  const responsive = useResponsive();
-  const logoScale = useSharedValue(0);
-  const screenOpacity = useSharedValue(1);
+  const dispatch = useAppDispatch();
+  const currentLanguage = useAppSelector((state) => state.preferences.language);
+  const { t } = useTranslation("auth");
+  const [checking, setChecking] = useState(true);
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
 
   useEffect(() => {
-    // Logo animation: scale(0) to scale(1) with spring
-    logoScale.value = withSpring(1, {
-      damping: 15,
-      stiffness: 120,
-      duration: 600,
-    });
+    let mounted = true;
 
-    // Check for auth token
-    const checkAuth = async () => {
-      try {
-        const token = await SecureStore.getItemAsync("authToken");
-        
-        // Wait for logo animation to complete
-        setTimeout(() => {
-          screenOpacity.value = withTiming(0, { duration: 400 }, (finished) => {
-            if (finished) {
-              runOnJS(navigateNext)(token);
-            }
-          });
-        }, 800);
-      } catch (error) {
-        console.error("Error checking auth:", error);
-        setTimeout(() => {
-          screenOpacity.value = withTiming(0, { duration: 400 }, (finished) => {
-            if (finished) {
-              runOnJS(navigateNext)(null);
-            }
-          });
-        }, 800);
+    const bootstrap = async () => {
+      const token = await AsyncStorage.getItem("auth_token");
+      if (!mounted) {
+        return;
       }
+
+      if (token) {
+        navigation.replace("MainTabs");
+      } else {
+        setShowLanguagePicker(true);
+      }
+
+      setChecking(false);
     };
 
-    checkAuth();
-  }, []);
+    bootstrap().catch(() => {
+      if (mounted) {
+        setShowLanguagePicker(true);
+        setChecking(false);
+      }
+    });
 
-  const navigateNext = (token: string | null) => {
-    if (token) {
-      navigation.replace("MainTabs");
-    } else {
-      navigation.replace("Onboarding");
-    }
+    return () => {
+      mounted = false;
+    };
+  }, [navigation]);
+
+  const handleLanguageSelect = async (code: (typeof languages)[number]["code"]) => {
+    dispatch(setLanguage(code));
+    await AsyncStorage.setItem("app_language", code);
+    await i18n.changeLanguage(code);
+    navigation.replace("Auth");
   };
 
-  const logoAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: logoScale.value }],
-  }));
-
-  const screenAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: screenOpacity.value,
-  }));
-
   return (
-    <Animated.View style={[styles.container, screenAnimatedStyle]}>
-      <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
+    <AppScreen style={styles.screen}>
+      <View style={styles.hero}>
         <View style={styles.logoBadge}>
           <MaterialCommunityIcons name="home-city-outline" size={46} color={colors.white} />
         </View>
-        <Animated.Text entering={FadeIn.duration(400).delay(300)} style={styles.brandTitle}>
-          SamarkandRent
-        </Animated.Text>
-      </Animated.View>
+        <Text style={styles.brandTitle}>SamarkandRent</Text>
+        <Text style={styles.brandSubtitle}>{t("splashSubtitle")}</Text>
+      </View>
 
-      {/* Language Selection */}
-      <Animated.View 
-        entering={FadeIn.duration(400).delay(500)}
-        style={styles.languageRow}
-      >
-        <LanguageButton flag="🇷🇺" code="ru" label="RU" />
-        <LanguageButton flag="🇺🇸" code="en" label="EN" />
-        <LanguageButton flag="🇺🇿" code="uz" label="UZ" />
-      </Animated.View>
-    </Animated.View>
-  );
-}
-
-function LanguageButton({ flag, code, label }: { flag: string; code: string; label: string }) {
-  const { useAppDispatch } from "@/store";
-  const { useTranslation } from "react-i18next";
-  const { t } = useTranslation("auth");
-  const currentLanguage = useAppSelector((state: any) => state.preferences.language);
-  const dispatch = useAppDispatch();
-  const isActive = currentLanguage === code;
-
-  const handlePress = async () => {
-    await dispatch({ type: "preferences/setLanguage", payload: code });
-    await AsyncStorage.setItem("lang", code);
-  };
-
-  return (
-    <Pressable
-      onPress={handlePress}
-      style={[styles.languageButton, isActive && styles.languageButtonActive]}
-    >
-      <Text style={styles.flagText}>{flag}</Text>
-      <Text style={[styles.languageLabel, isActive && styles.languageLabelActive]}>
-        {label}
-      </Text>
-    </Pressable>
+      {checking ? (
+        <ActivityIndicator color={colors.white} />
+      ) : showLanguagePicker ? (
+        <View style={styles.pickerWrap}>
+          <Text style={styles.pickerTitle}>{t("chooseLanguage")}</Text>
+          <View style={styles.languageRow}>
+            {languages.map((item) => {
+              const isActive = currentLanguage === item.code;
+              return (
+                <Pressable
+                  key={item.code}
+                  onPress={() => handleLanguageSelect(item.code)}
+                  style={[styles.languageButton, isActive && styles.languageButtonActive]}
+                  accessibilityRole="button"
+                  accessibilityLabel={item.label}
+                >
+                  <Text style={styles.flagText}>{item.flag}</Text>
+                  <Text style={[styles.languageLabel, isActive && styles.languageLabelActive]}>{item.label}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          <PrimaryButton label={t("continue")} onPress={() => handleLanguageSelect(currentLanguage as any)} />
+          <SecondaryButton label={t("login")} onPress={() => navigation.replace("Auth")} />
+        </View>
+      ) : null}
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    padding: 24,
+    padding: spacing.lg,
   },
-  logoContainer: {
+  hero: {
     alignItems: "center",
-    justifyContent: "center",
+    gap: spacing.sm,
+    marginBottom: spacing.xl,
   },
   logoBadge: {
     width: 96,
     height: 96,
-    borderRadius: 28,
+    borderRadius: radii.card * 2,
     backgroundColor: colors.primaryDark,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
   },
   brandTitle: {
-    fontSize: 34,
-    fontWeight: "800",
+    ...typography.title,
     color: colors.white,
-    letterSpacing: 0.5,
+  },
+  brandSubtitle: {
+    ...typography.body,
+    color: colors.white,
+    opacity: 0.9,
+    textAlign: "center",
+  },
+  pickerWrap: {
+    width: "100%",
+    backgroundColor: colors.surface,
+    borderRadius: radii.modal,
+    padding: spacing.lg,
+    gap: spacing.md,
+  },
+  pickerTitle: {
+    ...typography.subheading,
+    color: colors.textPrimary,
+    textAlign: "center",
   },
   languageRow: {
     flexDirection: "row",
-    marginTop: 48,
-    gap: 16,
-    flexWrap: "wrap",
-    justifyContent: "center",
+    gap: spacing.sm,
+    justifyContent: "space-between",
   },
   languageButton: {
+    flex: 1,
+    minHeight: 48,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: colors.border,
     alignItems: "center",
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "transparent",
-    backgroundColor: "rgba(255,255,255,0.15)",
-    minWidth: 80,
+    justifyContent: "center",
+    gap: 4,
+    backgroundColor: colors.surface,
   },
   languageButtonActive: {
-    borderColor: colors.white,
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryTint,
   },
   flagText: {
-    fontSize: 32,
-    marginBottom: 4,
+    fontSize: 20,
   },
   languageLabel: {
     fontSize: 12,
     fontWeight: "600",
-    color: "rgba(255,255,255,0.7)",
+    color: colors.textSecondary,
   },
   languageLabelActive: {
-    color: colors.white,
+    color: colors.primary,
   },
 });

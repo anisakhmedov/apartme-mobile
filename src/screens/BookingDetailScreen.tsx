@@ -28,7 +28,7 @@ export function BookingDetailScreen() {
       </Animated.View>
 
       <Animated.View entering={FadeIn.duration(400).delay(200)} style={styles.buttonContainer}>
-        <PrimaryButton
+        <SecondaryButton
           label="Отменить бронирование"
           onPress={() => {
             navigation.navigate("CancelBooking", { id: booking.id });
@@ -38,9 +38,9 @@ export function BookingDetailScreen() {
         <SecondaryButton
           label="Связаться с хостом"
           onPress={() => {
-            navigation.getParent()?.navigate("ChatFlow", {
+            navigation.getParent()?.navigate("ChatTab", {
               screen: "ChatThread",
-              params: { id: "msg-1" }
+              params: { id: "msg-1", title: "Azizbek Karimov" }
             });
           }}
         />

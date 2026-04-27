@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Calendar as RNCalendar } from "react-native";
+import { View, StyleSheet, Text, Pressable } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
+import { Calendar } from "react-native-calendars";
 import * as Haptics from "expo-haptics";
 
 import { colors, spacing, radii } from "@/theme";
@@ -43,7 +44,7 @@ export function BookingScreen() {
 
       <Animated.View entering={FadeInUp.duration(400).delay(100)}>
         <Card style={styles.calendarCard}>
-          <RNCalendar
+          <Calendar
             onDayPress={(day: any) => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               if (!checkIn) {
@@ -52,7 +53,7 @@ export function BookingScreen() {
                 setCheckOut(day.dateString);
               }
             }}
-            markedDates={
+            markedDates={(
               checkIn
                 ? {
                     [checkIn]: { selected: true, startDate: true },
@@ -61,7 +62,7 @@ export function BookingScreen() {
                       : {}),
                   }
                 : {}
-            }
+            ) as any}
             theme={{
               selectedDayBackgroundColor: colors.primary,
               todayTextColor: colors.primary,

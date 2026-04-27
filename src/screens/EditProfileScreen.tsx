@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { useNavigation, useNavigationParent } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
@@ -10,7 +10,7 @@ import { users } from "@/data/mockData";
 
 export function EditProfileScreen() {
   const navigation = useNavigation<any>();
-  const parentNavigation = useNavigationParent();
+  const parentNavigation = useNavigation<any>();
 
   return (
     <ScreenScroll contentContainerStyle={styles.container}>

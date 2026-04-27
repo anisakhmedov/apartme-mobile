@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 import { colors, spacing } from "@/theme";
@@ -16,6 +17,7 @@ export function MyBookingsScreen() {
   const [status, setStatus] = useState<(typeof statusTabs)[number]>("upcoming");
   const { data = mockBookings } = useGetBookingsQuery();
   const language = useItemLanguage();
+  const tabBarHeight = useBottomTabBarHeight();
 
   const filteredBookings = useMemo(() => {
     return data.filter((booking) => booking.status === status);
@@ -27,7 +29,7 @@ export function MyBookingsScreen() {
   };
 
   return (
-    <ScreenScroll contentContainerStyle={styles.container}>
+    <ScreenScroll contentContainerStyle={[styles.container, { paddingBottom: tabBarHeight + spacing.xl }]}>
       <Animated.View entering={FadeIn.duration(400)}>
         <Section title="Мои бронирования" subtitle="Управляйте своими поездками">
           {/* Status Tabs */}
@@ -61,11 +63,7 @@ export function MyBookingsScreen() {
               title={findPropertyTitle(booking.propertyId)}
               status={booking.status}
               subtitle={`${booking.checkIn} → ${booking.checkOut}`}
-              onPress={() =>
-                navigation.getParent()?.navigate("BookingDetail", {
-                  id: booking.id,
-                })
-              }
+              onPress={() => navigation.navigate("BookingDetail", { id: booking.id })}
             />
           </Animated.View>
         ))

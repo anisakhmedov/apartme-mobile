@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Animated, { FadeIn } from "react-native-reanimated";
 
 import { colors, spacing } from "@/theme";
@@ -14,6 +15,7 @@ export function ListingsScreen() {
   const route = useRoute<any>();
   const category = route.params?.category;
   const language = useItemLanguage();
+  const tabBarHeight = useBottomTabBarHeight();
 
   const { data = mockProperties } = useGetPropertiesQuery();
   
@@ -23,7 +25,7 @@ export function ListingsScreen() {
   }, [data, category]);
 
   return (
-    <ScreenScroll contentContainerStyle={styles.container}>
+    <ScreenScroll contentContainerStyle={[styles.container, { paddingBottom: tabBarHeight + spacing.xl }]}>
       <Animated.View entering={FadeIn.duration(400)}>
         {filteredProperties.map((property, index) => (
           <Animated.View

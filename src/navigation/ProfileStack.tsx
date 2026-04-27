@@ -1,7 +1,5 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
 
 import { ProfileScreen } from "@/screens/ProfileScreen";
 import { EditProfileScreen } from "@/screens/EditProfileScreen";
@@ -13,25 +11,20 @@ import { HostDashboardScreen } from "@/screens/HostDashboardScreen";
 import { MyListingsScreen } from "@/screens/MyListingsScreen";
 import { AddEditListingScreen } from "@/screens/AddEditListingScreen";
 import { BookingRequestsScreen } from "@/screens/BookingRequestsScreen";
-import { colors } from "@/theme";
+import { MyReviewsScreen } from "@/screens/MyReviewsScreen";
+import { HelpScreen } from "@/screens/HelpScreen";
+import { useAppTheme } from "@/theme";
 
 const Stack = createNativeStackNavigator();
 
 export function ProfileStack() {
-  const navigation = useNavigation();
-
-  React.useEffect(() => {
-    const unsubscribe = navigation.addListener("tabPress", () => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    });
-    return unsubscribe;
-  }, [navigation]);
+  const theme = useAppTheme();
 
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: colors.background },
+        contentStyle: { backgroundColor: theme.colors.background },
         animation: "slide_from_right",
         animationDuration: 280,
       }}
@@ -46,6 +39,8 @@ export function ProfileStack() {
       <Stack.Screen name="MyListings" component={MyListingsScreen} />
       <Stack.Screen name="AddEditListing" component={AddEditListingScreen} />
       <Stack.Screen name="BookingRequests" component={BookingRequestsScreen} />
+      <Stack.Screen name="MyReviews" component={MyReviewsScreen} />
+      <Stack.Screen name="Help" component={HelpScreen} />
     </Stack.Navigator>
   );
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { useNavigation, useNavigationParent } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
@@ -10,7 +10,6 @@ import { formatCurrency } from "@/components/ui";
 
 export function HostDashboardScreen() {
   const navigation = useNavigation<any>();
-  const parentNavigation = useNavigationParent();
 
   return (
     <ScreenScroll contentContainerStyle={styles.container}>
@@ -57,7 +56,7 @@ export function HostDashboardScreen() {
           label="Мои обьекты"
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            parentNavigation?.navigate("HostFlow", { screen: "MyListings" });
+            navigation.navigate("MyListings");
           }}
           style={styles.button}
         />
@@ -66,7 +65,7 @@ export function HostDashboardScreen() {
           label="Добавить обьект"
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            parentNavigation?.navigate("HostFlow", { screen: "AddEditListing" });
+            navigation.navigate("AddEditListing");
           }}
           style={styles.button}
         />

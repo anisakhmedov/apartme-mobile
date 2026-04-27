@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { useNavigation, useNavigationParent } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Animated, { FadeIn, FadeInDown, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -20,6 +20,7 @@ import {
   togglePush,
   setBiometric,
 } from "@/store/preferencesSlice";
+import { PrimaryButton } from "@/components/ui";
 import { logout } from "@/store/authSlice";
 
 const languageOptions = ["ru", "en", "uz"] as const;
@@ -27,7 +28,7 @@ const currencyOptions = ["UZS", "USD", "EUR"] as const;
 
 export function SettingsScreen() {
   const navigation = useNavigation<any>();
-  const parentNavigation = useNavigationParent();
+  const parentNavigation = useNavigation<any>();
   const { t } = useTranslation("profile");
   const dispatch = useAppDispatch();
   const preferences = useAppSelector((state: any) => state.preferences);

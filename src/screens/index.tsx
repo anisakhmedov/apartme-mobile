@@ -66,7 +66,7 @@ const languageOptions = ["ru", "en", "uz"] as const;
 const categories = ["apartments", "houses", "rooms", "guesthouses", "daily"] as const;
 const statusTabs = ["upcoming", "active", "completed", "cancelled"] as const;
 
-const formatTime = (dateString: string) => new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(dateString));
+export const formatTime = (dateString: string) => new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(dateString));
 
 const ScreenTitle = ({ title, subtitle }: { title: string; subtitle?: string }) => (
   <View style={{ marginBottom: spacing.md }}>
@@ -75,7 +75,7 @@ const ScreenTitle = ({ title, subtitle }: { title: string; subtitle?: string }) 
   </View>
 );
 
-function useItemLanguage() {
+export function useItemLanguage() {
   return useAppSelector((state) => state.preferences.language) as keyof LocalizedText;
 }
 

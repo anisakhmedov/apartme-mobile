@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, TextInput as RNTextInput } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { View, StyleSheet, Text, Pressable, TextInput as RNTextInput } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -14,9 +14,14 @@ import * as Haptics from "expo-haptics";
 
 import { colors, spacing } from "@/theme";
 import { PrimaryButton, SecondaryButton } from "@/components/ui";
+import { useAppDispatch } from "@/store";
+import { persistAuth, setUser } from "@/store/authSlice";
+import { users } from "@/data/mockData";
 
 export function OTPVerificationScreen() {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const dispatch = useAppDispatch();
   const [otp, setOtp] = useState(["", "", "", "", "", "", ""]);
   const [countdown, setCountdown] = useState(45);
   const [resendEnabled, setResendEnabled] = useState(false);
@@ -55,7 +60,14 @@ export function OTPVerificationScreen() {
     if (code.length === 6) {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      navigation.navigate("MainTabs");
+      const user = {
+        ...users[1],
+        name: route.params?.pendingName || users[1].name,
+        email: route.params?.pendingEmail || users[1].email,
+        phone: route.params?.pendingPhone || users[1].phone,
+      };
+      dispatch(setUser(user));
+      dispatch(persistAuth({ isLoggedIn: true, user }));
     }
   };
 
@@ -102,24 +114,22 @@ export function OTPVerificationScreen() {
         style={styles.otpContainer}
       >
         {otp.map((digit, index) => (
-          <TextInput
+          <RNTextInput
             key={index}
-            ref={(ref) => {
+            ref={(ref: RNTextInput | null) => {
               if (ref) inputRefs.current[index] = ref;
             }}
             style={[
               styles.otpCell,
               digit ? styles.otpCellFilled : null,
+              { fontSize: 20, fontWeight: "800", color: colors.textPrimary },
             ]}
             value={digit}
             onChangeText={(value) => handleChange(value, index)}
-            onKeyPress={(e) => handleKeyPress(e, index)}
+            onKeyPress={(e: any) => handleKeyPress(e, index)}
             keyboardType="number-pad"
             maxLength={1}
             textAlign="center"
-            fontSize={20}
-            fontWeight="800"
-            color={colors.textPrimary}
           />
         ))}
       </Animated.View>

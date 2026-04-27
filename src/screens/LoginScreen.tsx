@@ -1,300 +1,137 @@
-import React, { useState, useRef } from "react";
-import { View, StyleSheet, KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import Animated, {
-  FadeIn,
-  FadeOut,
-  SlideInRight,
-  SlideOutLeft,
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withSequence,
-  withTiming,
-  Easing,
-} from "react-native-reanimated";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
-import { PrimaryButton, SecondaryButton, GhostButton, TextField } from "@/components/ui";
+import { AppScreen, PrimaryButton, SecondaryButton, TextField } from "@/components/ui";
+import { colors, spacing, typography } from "@/theme";
 import { useAppDispatch } from "@/store";
-import { setUser, persistAuth } from "@/store/authSlice";
+import { persistAuth, setUser } from "@/store/authSlice";
 import { users } from "@/data/mockData";
-
-const loginSchema = z.object({
-  emailOrPhone: z.string().min(1, "Заполните поле").email("Неверный формат email"),
-  password: z.string().min(6, "Минимум 6 символов"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginScreen() {
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [emailOrPhone, setEmailOrPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
-  const shake = useSharedValue(0);
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
-  const { control, handleSubmit, formState: { errors, isValid } } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    mode: "onChange",
-    defaultValues: {
-      emailOrPhone: "",
-      password: "",
-    },
-  });
-
-  const shakeStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shake.value }],
-  }));
-
-  const onSubmit = async (data: LoginFormData) => {
-    setLoading(true);
-    setApiError("");
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Mock: check if user exists
-      const user = users[1];
-      dispatch(setUser(user));
-      dispatch(persistAuth({ isLoggedIn: true, user }));
-
-      navigation.replace("MainTabs");
-    } catch (error) {
-      setApiError("Неверный пароль");
-
-      // Shake animation
-      shake.value = withSequence(
-        withTiming(-8, { duration: 50 }),
-        withTiming(8, { duration: 50 }),
-        withTiming(-8, { duration: 50 }),
-        withTiming(8, { duration: 50 }),
-        withTiming(0, { duration: 50 })
-      );
-    } finally {
-      setLoading(false);
+  const handleLogin = async () => {
+    if (!emailOrPhone.trim() || !password.trim()) {
+      setApiError("Заполните email и пароль");
+      return;
     }
-  };
 
-  const handleGoogleLogin = () => {
+    setApiError("");
+    setLoading(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    // TODO: Implement expo-auth-session Google flow
-    console.log("Google login pressed");
+    await new Promise((resolve) => setTimeout(resolve, 900));
+    const user = users[1];
+    dispatch(setUser(user));
+    dispatch(persistAuth({ isLoggedIn: true, user }));
+    setLoading(false);
   };
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={styles.container}
-      enableOnAndroid
-      extraScrollHeight={20}
-    >
-      <Animated.View entering={FadeIn.duration(400)} style={styles.header}>
-        <Animated.Text style={styles.logoText}>SamarkandRent</Animated.Text>
-        <Animated.Text style={styles.subtitle}>Войдите в свой аккаунт</Animated.Text>
-      </Animated.View>
-
-      <Animated.View entering={SlideInRight.duration(400).delay(100)} style={styles.form}>
-        {/* Email/Phone Field */}
-        <Controller
-          control={control}
-          name="emailOrPhone"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <View style={styles.fieldContainer}>
-              <TextField
-                label="Email или телефон"
-                placeholder="Email или телефон"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                error={errors.emailOrPhone?.message}
-                style={errors.emailOrPhone ? styles.fieldError : undefined}
-              />
-            </View>
-          )}
-        />
-
-        {/* Password Field */}
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <View style={styles.fieldContainer}>
-              <View style={styles.passwordContainer}>
-                <TextField
-                  label="Пароль"
-                  placeholder="Пароль"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  secureTextEntry={secureTextEntry}
-                  error={errors.password?.message}
-                  style={[styles.passwordInput, errors.password ? styles.fieldError : undefined]}
-                />
-                <Pressable
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    setSecureTextEntry(!secureTextEntry);
-                  }}
-                  style={styles.eyeIcon}
-                >
-                  <MaterialIcons
-                    name={secureTextEntry ? "visibility" : "visibility-off"}
-                    size={20}
-                    color={colors.textSecondary}
-                  />
-                </Pressable>
-              </View>
-            </View>
-          )}
-        />
-
-        {/* API Error Toast */}
-        {apiError ? (
-          <Animated.View entering={SlideInRight.duration(300)} style={styles.errorToast}>
-            <Text style={styles.errorToastText}>{apiError}</Text>
-          </Animated.View>
-        ) : null}
-
-        {/* Login Button */}
-        <Animated.View style={[styles.buttonContainer, shakeStyle]}>
-          <PrimaryButton
-            label={loading ? "" : "Войти"}
-            onPress={handleSubmit(onSubmit)}
-            loading={loading}
-            disabled={!isValid}
-            style={!isValid ? styles.disabledButton : undefined}
-          />
-        </Animated.View>
-
-        {/* Google Login */}
-        <SecondaryButton
-          label="Войти через Google"
-          onPress={handleGoogleLogin}
-          icon="google"
-          style={styles.googleButton}
-        />
-
-        {/* Forgot Password */}
-        <View style={styles.forgotContainer}>
-          <GhostButton
-            label="Забыли пароль?"
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              navigation.navigate("ForgotPassword");
-            }}
-          />
+    <AppScreen>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.logoText}>SamarkandRent</Text>
+          <Text style={styles.subtitle}>Войдите в свой аккаунт</Text>
         </View>
-      </Animated.View>
 
-      {/* Register Link */}
-      <Animated.View entering={FadeIn.duration(400).delay(300)} style={styles.footer}>
-        <Text style={styles.footerText}>Нет аккаунта? </Text>
-        <Pressable
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            navigation.navigate("Register");
-          }}
-        >
-          <Text style={styles.registerLink}>Зарегистрироваться</Text>
-        </Pressable>
-      </Animated.View>
-    </KeyboardAwareScrollView>
+        <View style={styles.form}>
+          <TextField label="Email или телефон" placeholder="Email или телефон" value={emailOrPhone} onChangeText={setEmailOrPhone} keyboardType="email-address" autoCapitalize="none" />
+          <View>
+            <TextField label="Пароль" placeholder="Пароль" value={password} onChangeText={setPassword} secureTextEntry={secureTextEntry} />
+            <Pressable onPress={() => setSecureTextEntry((current) => !current)} style={styles.toggleLink} accessibilityRole="button">
+              <Text style={styles.toggleLinkText}>{secureTextEntry ? "Показать" : "Скрыть"}</Text>
+            </Pressable>
+          </View>
+
+          {apiError ? <Text style={styles.errorText}>{apiError}</Text> : null}
+
+          <PrimaryButton label={loading ? "Входим..." : "Войти"} onPress={handleLogin} loading={loading} disabled={!emailOrPhone.trim() || !password.trim()} />
+          <SecondaryButton label="Войти через Google" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)} />
+
+          <Pressable onPress={() => navigation.navigate("ForgotPassword")} style={styles.forgotLink} accessibilityRole="button">
+            <Text style={styles.forgotText}>Забыли пароль?</Text>
+          </Pressable>
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Нет аккаунта? </Text>
+            <Pressable onPress={() => navigation.navigate("Register")} accessibilityRole="button">
+              <Text style={styles.registerLink}>Зарегистрироваться</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
     backgroundColor: colors.background,
     padding: spacing.lg,
     justifyContent: "center",
   },
   header: {
-    marginBottom: 40,
+    marginBottom: spacing.xl,
   },
   logoText: {
-    fontSize: 28,
-    fontWeight: "500",
+    ...typography.title,
     color: colors.textPrimary,
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: spacing.xs,
   },
   subtitle: {
-    fontSize: 15,
-    fontWeight: "400",
+    ...typography.body,
     color: colors.textSecondary,
     textAlign: "center",
-    lineHeight: 22,
   },
   form: {
     gap: spacing.md,
   },
-  fieldContainer: {
-    marginBottom: spacing.md,
+  toggleLink: {
+    alignSelf: "flex-end",
+    marginTop: spacing.xs,
   },
-  passwordContainer: {
-    position: "relative",
+  toggleLinkText: {
+    ...typography.caption,
+    color: colors.primary,
+    fontWeight: "600",
   },
-  passwordInput: {
-    paddingRight: 50,
+  errorText: {
+    ...typography.caption,
+    color: colors.error,
   },
-  eyeIcon: {
-    position: "absolute",
-    right: 12,
-    top: 55,
-    padding: 4,
+  forgotLink: {
+    alignSelf: "center",
+    paddingVertical: spacing.sm,
   },
-  fieldError: {
-    borderColor: colors.error,
-    borderWidth: 2,
-  },
-  errorToast: {
-    backgroundColor: colors.textPrimary,
-    padding: spacing.md,
-    borderRadius: 12,
-    marginBottom: spacing.md,
-  },
-  errorToastText: {
-    color: colors.white,
-    fontSize: 13,
-    fontWeight: "400",
-  },
-  buttonContainer: {
-    marginTop: spacing.sm,
-  },
-  disabledButton: {
-    opacity: 0.6,
-    backgroundColor: "#F4F4F4",
-  },
-  googleButton: {
-    marginTop: spacing.md,
-  },
-  forgotContainer: {
-    alignItems: "center",
-    marginTop: spacing.md,
+  forgotText: {
+    ...typography.body,
+    color: colors.primary,
+    fontWeight: "600",
   },
   footer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 32,
-    marginBottom: 16,
+    alignItems: "center",
+    marginTop: spacing.sm,
   },
   footerText: {
-    fontSize: 15,
+    ...typography.body,
     color: colors.textSecondary,
   },
   registerLink: {
-    fontSize: 15,
+    ...typography.body,
     color: colors.primary,
-    fontWeight: "500",
+    fontWeight: "700",
     textDecorationLine: "underline",
   },
 });
