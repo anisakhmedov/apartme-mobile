@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 
 import { AppScreen, PrimaryButton, ScreenScroll, TextField } from "@/components/ui";
 import { colors, radii, spacing, typography } from "@/theme";
-
+// The imports from "@/theme are already correct and specific.
 export function ForgotPasswordScreen() {
+  const { t } = useTranslation("auth");
   const navigation = useNavigation<any>();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,22 +31,22 @@ export function ForgotPasswordScreen() {
     <AppScreen>
       <ScreenScroll contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Забыли пароль?</Text>
-          <Text style={styles.subtitle}>Введите email, и мы отправим ссылку для сброса пароля</Text>
+          <Text style={styles.title}>{t("forgotPassword")}</Text>
+          <Text style={styles.subtitle}>{t("forgotSubtitle")}</Text>
         </View>
 
         {sent ? (
           <View style={styles.successContainer}>
-            <Text style={styles.successTitle}>Письмо отправлено</Text>
-            <Text style={styles.successText}>Проверьте почту и следуйте инструкциям в письме.</Text>
-            <PrimaryButton label="Вернуться к входу" onPress={() => navigation.navigate("Login")} />
+            <Text style={styles.successTitle}>{t("forgotEmailSentTitle")}</Text>
+            <Text style={styles.successText}>{t("forgotEmailSentText")}</Text>
+            <PrimaryButton label={t("backToLogin")} onPress={() => navigation.navigate("Login")} />
           </View>
         ) : (
           <View style={styles.form}>
-            <TextField label="Email" placeholder="email@example.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
-            <PrimaryButton label={loading ? "Отправка..." : "Отправить ссылку"} onPress={handleSubmit} loading={loading} disabled={!email.trim()} />
+            <TextField label={t("email")} placeholder="email@example.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+            <PrimaryButton label={loading ? t("sending") : t("sendResetLink")} onPress={handleSubmit} loading={loading} disabled={!email.trim()} />
             <Pressable onPress={() => navigation.goBack()} style={styles.backLinkWrap} accessibilityRole="button">
-              <Text style={styles.backLink}>← Вернуться к входу</Text>
+              <Text style={styles.backLink}>← {t("backToLogin")}</Text>
             </Pressable>
           </View>
         )}

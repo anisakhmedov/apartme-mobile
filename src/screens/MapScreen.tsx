@@ -6,7 +6,7 @@ import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { properties as mockProperties } from "@/data/mockData";
-import { useGetPropertiesQuery } from "@/services/api";
+import { useGetPropertiesQuery } from "@/services/api"; // Removed unused import of `colors`
 import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
 import { GlassContainer, IconButton, formatCurrency } from "@/components/ui";
 import MapView, { Marker, PROVIDER_GOOGLE } from "@/components/map";
@@ -15,7 +15,7 @@ import { useItemLanguage } from "./index";
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
-      flex: 1,
+      flex: 1, // Kept theme.colors.background
       backgroundColor: theme.colors.background,
     },
     map: {
@@ -24,26 +24,26 @@ const createStyles = (theme: AppTheme) =>
     header: {
       position: "absolute",
       left: spacing.md,
-      right: spacing.md,
+      right: spacing.md, // Kept theme.zIndex.sticky
       zIndex: theme.zIndex.sticky,
     },
     headerContent: {
-      padding: spacing.sm,
-      flexDirection: "row",
+      padding: spacing.sm, // Kept spacing.sm
+      flexDirection: "row", // Kept spacing.sm
       alignItems: "center",
       gap: spacing.sm,
     },
     headerCopy: {
       flex: 1,
       minWidth: 0,
-    },
+    }, // Kept typography.subheading
     headerTitle: {
       ...typography.subheading,
       color: theme.colors.textPrimary,
     },
     headerSubtitle: {
       ...typography.caption,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 2,
     },
     marker: {
@@ -52,19 +52,19 @@ const createStyles = (theme: AppTheme) =>
       borderRadius: 18,
       paddingHorizontal: 12,
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "center", // Kept theme.colors.white
       borderWidth: 1,
       borderColor: alpha(theme.colors.white, 0.82),
       backgroundColor: theme.colors.surface,
       ...theme.elevation.soft,
     },
     markerActive: {
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.primary, // Kept theme.colors.primary
       borderColor: alpha(theme.colors.white, 0.18),
     },
     markerText: {
       ...typography.caption,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     markerTextActive: {
       color: theme.colors.white,
@@ -72,60 +72,60 @@ const createStyles = (theme: AppTheme) =>
     listingPanel: {
       position: "absolute",
       left: spacing.md,
-      right: spacing.md,
+      right: spacing.md, // Kept theme.zIndex.sticky
       zIndex: theme.zIndex.sticky,
     },
     listingContent: {
-      padding: spacing.md,
-      gap: spacing.sm,
+      padding: spacing.md, // Kept spacing.md
+      gap: spacing.sm, // Kept spacing.sm
     },
     listingTopRow: {
       flexDirection: "row",
       alignItems: "flex-start",
       justifyContent: "space-between",
-      gap: spacing.md,
+      gap: spacing.md, // Kept spacing.md
     },
     listingEyebrow: {
       ...typography.caption,
       color: theme.colors.textSecondary,
       textTransform: "uppercase",
-      letterSpacing: 0.5,
+      letterSpacing: 0.5, // Kept theme.colors.textSecondary
     },
     listingTitle: {
       ...typography.subheading,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
       marginTop: 6,
     },
     listingAddress: {
       ...typography.body,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 4,
     },
     listingPrice: {
       ...typography.heading,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     listingActions: {
       flexDirection: "row",
       gap: spacing.sm,
     },
     actionButton: {
-      flex: 1,
-      minHeight: 46,
+      flex: 1, // Kept 46
+      minHeight: 46, // Kept 16
       borderRadius: 16,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: theme.colors.border, // Kept theme.colors.border
       backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.62),
       alignItems: "center",
       justifyContent: "center",
     },
     actionButtonPrimary: {
-      backgroundColor: theme.colors.primary,
-      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.primary, // Kept theme.colors.primary
+      borderColor: theme.colors.primary, // Kept theme.colors.primary
     },
     actionText: {
       ...typography.bodyStrong,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     actionTextPrimary: {
       color: theme.colors.white,

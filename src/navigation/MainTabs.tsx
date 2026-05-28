@@ -1,33 +1,114 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Platform, Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
+import Animated, { useAnimatedStyle, withSpring, withTiming } from "react-native-reanimated";
 
 import { BookingsStack } from "@/navigation/BookingsStack";
 import { ChatStack } from "@/navigation/ChatStack";
 import { HomeStack } from "@/navigation/HomeStack";
 import { ProfileStack } from "@/navigation/ProfileStack";
 import { SearchStack } from "@/navigation/SearchStack";
-import { alpha, AppTheme, darkTheme, lightTheme, typography, useAppTheme } from "@/theme";
+import { alpha, AppTheme, darkTheme, lightTheme, radii, spacing, typography, useAppTheme } from "@/theme";
 import { useAppSelector } from "@/store";
 
 const Tab = createBottomTabNavigator();
 
+/**
+ * Утилита для определения, нужно ли скрыть таббар на основе вложенной навигации
+ */
+const getFocusedRouteName = (route: any): string | undefined => {
+  const state = route.state;
+  if (state?.routes && typeof state.index === 'number') {
+    const focusedRoute = state.routes[state.index];
+    return focusedRoute.name;
+  }
+  return route.params?.screen;
+};
+
+const rootTabRoutes: Record<string, string> = {
+  HomeTab: "Home",
+  SearchTab: "Search",
+  BookingsTab: "MyBookings",
+  ChatTab: "Inbox",
+  ProfileTab: "Profile",
+};
+
+function CustomTabBar({ state, descriptors, navigation, insets }: BottomTabBarProps) {
+  const theme = useAppTheme();
+  const styles = theme.mode === "dark" ? darkStyles : lightStyles;
+  const { width } = useWindowDimensions();
+  const unreadCount = useAppSelector(() => 3);
+  const bookingCount = useAppSelector(() => 2);
+
+  // Расчет позиции индикатора
+  const tabWidth = (width - 32) / state.routes.length;
+  const indicatorStyle = useAnimatedStyle(() => ({
+    transform: [
+      { 
+        translateX: withSpring(state.index * tabWidth + tabWidth / 2 - 2, { damping: 15 }) 
+      }
+    ],
+  }));
+
+  // Проверка: находимся ли мы на корневом экране стека
+  const currentRoute = state.routes[state.index];
+  const focusedChild = getFocusedRouteName(currentRoute);
+  const isRoot = !focusedChild || focusedChild === rootTabRoutes[currentRoute.name];
+
+  if (!isRoot) return null;
+
+  // Получаем состояние видимости из опций текущего экрана
+  const focusedOptions = descriptors[currentRoute.key].options;
+  const isVisible = (focusedOptions as any).tabBarVisible !== false;
+
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: withSpring(isVisible ? 0 : 100, { damping: 20, stiffness: 90 }) }
+    ],
+    opacity: withTiming(isVisible ? 1 : 0, { duration: 200 }),
+  }));
+
+  return (
+    <Animated.View style={[styles.tabBarContainer, { bottom: Math.max(insets.bottom, 16) }, animatedContainerStyle]}>
+      <View style={styles.background} />
+      <Animated.View style={[styles.activeDot, indicatorStyle]} />
+      {state.routes.map((route, index) => {
+        const { options } = descriptors[route.key];
+        const isFocused = state.index === index;
+
+        const onPress = () => {
+          const event = navigation.emit({ type: "tabPress", target: route.key, canPreventDefault: true });
+          if (!isFocused && !event.defaultPrevented) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.navigate(route.name);
+          }
+        };
+
+        return (
+          <TabItem
+            key={route.key}
+            route={route}
+            isFocused={isFocused}
+            onPress={onPress}
+            label={options.title ?? route.name}
+            unreadCount={route.name === "ChatTab" ? unreadCount : route.name === "BookingsTab" ? bookingCount : 0}
+          />
+        );
+      })}
+    </Animated.View>
+  );
+}
+
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
-    iconContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-      position: "relative",
-      width: 28,
-      height: 28,
-    },
     badge: {
       position: "absolute",
-      top: -6,
-      right: -8,
+      top: -4,
+      right: -6,
       minWidth: 16,
       height: 16,
       borderRadius: 8,
@@ -45,128 +126,96 @@ const createStyles = (theme: AppTheme) =>
     },
     activeDot: {
       position: "absolute",
-      top: -4,
-      width: 7,
-      height: 7,
-      borderRadius: 3.5,
+      top: 10,
+      width: 4,
+      height: 4,
+      borderRadius: 2,
       backgroundColor: theme.colors.primary,
+      zIndex: 10,
+    },
+    tabBarContainer: {
+      flexDirection: "row",
+      height: 64,
+      position: "absolute",
+      left: 16,
+      right: 16,
+      borderRadius: radii.card,
+      zIndex: 100,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      ...theme.elevation.floating,
+    },
+    background: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: theme.colors.surface,
+      borderRadius: radii.card,
+    },
+    tabItem: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingTop: 8,
+    },
+    tabLabel: {
+      ...typography.micro,
+      fontSize: 10,
+      marginTop: 4,
+      fontWeight: "600",
+    },
+    iconWrapper: {
+      width: 40,
+      height: 24,
+      alignItems: "center",
+      justifyContent: "center",
     },
   });
 
 const lightStyles = createStyles(lightTheme);
 const darkStyles = createStyles(darkTheme);
 
-const rootTabRoutes: Record<string, string> = {
-  HomeTab: "Home",
-  SearchTab: "Search",
-  BookingsTab: "MyBookings",
-  ChatTab: "Inbox",
-  ProfileTab: "Profile",
-};
-
-export function MainTabs() {
-  const insets = useSafeAreaInsets();
+function TabItem({ route, isFocused, onPress, label, unreadCount }: any) {
   const theme = useAppTheme();
   const styles = theme.mode === "dark" ? darkStyles : lightStyles;
-  const unreadCount = useAppSelector(() => 3);
-  const bookingCount = useAppSelector(() => 2);
 
-  const getFocusedChildRouteName = (route: any) => {
-    const state = route.state as { index?: number; routes?: Array<{ name: string }> } | undefined;
-
-    if (state?.routes?.length) {
-      return state.routes[state.index ?? state.routes.length - 1]?.name;
-    }
-
-    const screenParam = route.params?.screen;
-    if (typeof screenParam === "string") {
-      return screenParam;
-    }
-
-    return rootTabRoutes[route.name];
+  const icons: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> = {
+    HomeTab: isFocused ? "home-variant" : "home-variant-outline",
+    SearchTab: isFocused ? "compass" : "compass-outline",
+    BookingsTab: isFocused ? "calendar-star" : "calendar-blank-outline",
+    ChatTab: isFocused ? "chat-processing" : "chat-processing-outline",
+    ProfileTab: isFocused ? "account-circle" : "account-circle-outline",
   };
 
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarStyle: (() => {
-          const focusedRouteName = getFocusedChildRouteName(route);
-          const shouldHideTabBar =
-            Boolean(focusedRouteName) && focusedRouteName !== rootTabRoutes[route.name];
+    <Pressable onPress={onPress} style={styles.tabItem}>
+      <View style={styles.iconWrapper}>
+        <MaterialCommunityIcons
+          name={icons[route.name]}
+          size={24}
+          color={isFocused ? theme.colors.primary : theme.colors.textSecondary}
+        />
+        {unreadCount > 0 && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{unreadCount}</Text>
+          </View>
+        )}
+      </View>
+      <Text style={[styles.tabLabel, { color: isFocused ? theme.colors.primary : theme.colors.textSecondary }]}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
 
-          if (shouldHideTabBar) {
-            return { display: "none" };
-          }
+export function MainTabs() {
+  const { t } = useTranslation("home");
 
-          return {
-            height: 68 + insets.bottom,
-            paddingBottom: insets.bottom + 8,
-            paddingTop: 8,
-            backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.9 : 0.82),
-            borderTopWidth: 1,
-            borderTopColor: theme.colors.glassBorderStrong,
-            position: "absolute",
-            left: 12,
-            right: 12,
-            bottom: 12,
-            borderRadius: 26,
-            zIndex: 30,
-            shadowColor: theme.colors.black,
-            shadowOpacity: theme.mode === "dark" ? 0.35 : 0.12,
-            shadowRadius: 18,
-            shadowOffset: { width: 0, height: 10 },
-            elevation: 12,
-          };
-        })(),
-        headerShown: false,
-        sceneStyle: {
-          paddingTop: insets.top,
-          backgroundColor: theme.colors.background,
-        },
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.textSecondary,
-        tabBarLabelStyle: {
-          fontSize: 11,
-          marginBottom: 2,
-          fontWeight: "600",
-        },
-        tabBarIcon: ({ color, size, focused }) => {
-          const icons: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> = {
-            HomeTab: focused ? "home-variant" : "home-variant-outline",
-            SearchTab: focused ? "compass" : "compass-outline",
-            BookingsTab: focused ? "calendar-star" : "calendar-blank-outline",
-            ChatTab: focused ? "chat-processing" : "chat-processing-outline",
-            ProfileTab: focused ? "account-circle" : "account-circle-outline",
-          };
-
-          return (
-            <View style={styles.iconContainer}>
-              {(route.name === "ChatTab" && unreadCount > 0) ||
-              (route.name === "BookingsTab" && bookingCount > 0) ? (
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>
-                    {route.name === "ChatTab" ? unreadCount : bookingCount}
-                  </Text>
-                </View>
-              ) : null}
-              {focused ? <View style={styles.activeDot} /> : null}
-              <MaterialCommunityIcons name={icons[route.name] ?? "circle-outline"} size={size} color={color} />
-            </View>
-          );
-        },
-        tabBarHideOnKeyboard: true,
-      })}
-      screenListeners={{
-        tabPress: () => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        },
-      }}
-    >
-      <Tab.Screen name="HomeTab" component={HomeStack} options={{ title: "Главная" }} />
-      <Tab.Screen name="SearchTab" component={SearchStack} options={{ title: "Поиск" }} />
-      <Tab.Screen name="BookingsTab" component={BookingsStack} options={{ title: "Брони" }} />
-      <Tab.Screen name="ChatTab" component={ChatStack} options={{ title: "Сообщения" }} />
-      <Tab.Screen name="ProfileTab" component={ProfileStack} options={{ title: "Профиль" }} />
+  return (
+    <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />} screenOptions={{ headerShown: false }}>
+      <Tab.Screen name="HomeTab" component={HomeStack} options={{ title: t("tabHome") }} />
+      <Tab.Screen name="SearchTab" component={SearchStack} options={{ title: t("tabSearch") }} />
+      <Tab.Screen name="BookingsTab" component={BookingsStack} options={{ title: t("tabBookings") }} />
+      <Tab.Screen name="ChatTab" component={ChatStack} options={{ title: t("tabMessages") }} />
+      <Tab.Screen name="ProfileTab" component={ProfileStack} options={{ title: t("tabProfile") }} />
     </Tab.Navigator>
   );
 }

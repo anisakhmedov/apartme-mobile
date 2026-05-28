@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography } from "@/theme";
 import { PrimaryButton, SecondaryButton, ScreenScroll } from "@/components/ui";
 
 export function CancelBookingScreen() {
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   },
   warningText: {
     fontSize: 15,
-    color: colors.primary,
+    color: colors.primary.DEFAULT,
     lineHeight: 22,
   },
   bookingInfo: {

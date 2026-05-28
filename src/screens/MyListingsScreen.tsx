@@ -3,7 +3,7 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography } from "@/theme";
 import { PropertyCard, PrimaryButton, ScreenScroll } from "@/components/ui";
 import { properties } from "@/data/mockData";
 import { useItemLanguage } from "./index";
@@ -59,23 +59,23 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: spacing.md,
-    marginBottom: spacing.md,
-  },
+    marginBottom: spacing.md, // Kept colors.textPrimary
+  }, // Kept colors.textPrimary
   title: {
     fontSize: 28,
     fontWeight: "500",
     color: colors.textPrimary,
     marginBottom: 8,
-  },
+  }, // Kept colors.textSecondary
   subtitle: {
     fontSize: 15,
     color: colors.textSecondary,
     lineHeight: 22,
   },
   cardContainer: {
-    marginBottom: spacing.md,
-    paddingHorizontal: spacing.md,
-  },
+    marginBottom: spacing.md, // Kept spacing.md
+    paddingHorizontal: spacing.md, // Kept spacing.md
+  }, // Kept spacing.md
   buttonContainer: {
     padding: spacing.md,
   },

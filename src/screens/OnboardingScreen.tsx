@@ -8,8 +8,9 @@ import Animated, {
   Extrapolate,
   FadeIn,
 } from "react-native-reanimated";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, type NavigationProp } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 import { colors } from "@/theme";
 import { PrimaryButton, SecondaryButton } from "@/components/ui";
@@ -27,35 +28,41 @@ interface Slide {
   illustration: string;
 }
 
-const slides: Slide[] = [
-  {
-    id: "1",
-    icon: "map-marker-radius",
-    title: "Найдите идеальное жильё в Самарканде",
-    body: "Тысячи вариантов жилья для любого бюджета",
-    illustration: "registan",
-  },
-  {
-    id: "2",
-    icon: "calendar-check",
-    title: "Безопасное бронирование за минуту",
-    body: "Мгновенное подтверждение и защита платежей",
-    illustration: "calendar",
-  },
-  {
-    id: "3",
-    icon: "chat-processing",
-    title: "Лучшие хосты Самарканда",
-    body: "Местные хосты с высоким рейтингом",
-    illustration: "host",
-  },
-];
+// Define a type for your navigation stack if you have one
+// For example: type RootStackParamList = { Login: undefined; Register: undefined; };
+// Then use useNavigation<NavigationProp<RootStackParamList>>();
 
 export function OnboardingScreen() {
-  const navigation = useNavigation<any>();
+  const { t } = useTranslation("auth");
+  const navigation = useNavigation(); // Using `any` for simplicity, consider defining a proper type
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useSharedValue(0);
   const responsive = useResponsive();
+  const flatListRef = React.useRef<FlatList>(null);
+
+  const slides: Slide[] = [
+    {
+      id: "1",
+      icon: "map-marker-radius",
+      title: t("slide1Title"),
+      body: t("slide1Body"),
+      illustration: "registan",
+    },
+    {
+      id: "2",
+      icon: "calendar-check",
+      title: t("slide2Title"),
+      body: t("slide2Body"),
+      illustration: "calendar",
+    },
+    {
+      id: "3",
+      icon: "chat-processing",
+      title: t("slide3Title"),
+      body: t("slide3Body"),
+      illustration: "host",
+    },
+  ];
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -65,9 +72,9 @@ export function OnboardingScreen() {
 
   const handleNext = () => {
     if (currentIndex < slides.length - 1) {
-      // Scroll to next slide with spring
-      // In real implementation, use ref to scroll
-      setCurrentIndex(currentIndex + 1);
+      const nextIndex = currentIndex + 1;
+      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+      setCurrentIndex(nextIndex);
     }
   };
 
@@ -84,11 +91,12 @@ export function OnboardingScreen() {
       {/* Skip button - hidden on last slide */}
       {currentIndex < slides.length - 1 && (
         <Animated.View entering={FadeIn} style={styles.skipContainer}>
-          <SecondaryButton label="Пропустить" onPress={handleSkip} />
+          <SecondaryButton label={t("skip")} onPress={handleSkip} />
         </Animated.View>
       )}
 
       <AnimatedFlatList
+        ref={flatListRef}
         data={slides}
         horizontal
         pagingEnabled
@@ -96,6 +104,9 @@ export function OnboardingScreen() {
         onScroll={scrollHandler}
         scrollEventThrottle={16}
         keyExtractor={(item) => item.id}
+        onMomentumScrollEnd={(e) => {
+          setCurrentIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH));
+        }}
         renderItem={({ item, index }) => (
           <OnboardingSlide
             slide={item}
@@ -121,12 +132,12 @@ export function OnboardingScreen() {
       {/* Action buttons */}
       <View style={styles.actionContainer}>
         {currentIndex < slides.length - 1 ? (
-          <PrimaryButton label="Далее" onPress={handleNext} />
+          <PrimaryButton label={t("onboardingNext")} onPress={handleNext} />
         ) : (
           <>
-            <PrimaryButton label="Войти" onPress={handleGetStarted} />
+            <PrimaryButton label={t("login")} onPress={handleGetStarted} />
             <SecondaryButton
-              label="Зарегистрироваться"
+              label={t("register")}
               onPress={() => navigation.navigate("Register")}
             />
           </>

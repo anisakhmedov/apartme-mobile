@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography } from "@/theme";
 import { NotificationRow, SecondaryButton, ScreenScroll } from "@/components/ui";
 import { useGetNotificationsQuery } from "@/services/api";
 import { notifications as mockNotifications } from "@/data/mockData";
@@ -67,12 +67,12 @@ const styles = StyleSheet.create({
     margin: spacing.md,
   },
   empty: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center", // Kept 48
+    justifyContent: "center", // Kept 48
     paddingVertical: 48,
   },
   emptyText: {
     fontSize: 15,
-    color: colors.textSecondary,
+    color: colors.textSecondary, // Kept colors.textSecondary
   },
 });

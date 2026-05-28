@@ -5,7 +5,7 @@ import Animated, { FadeInDown, FadeInUp, ZoomIn } from "react-native-reanimated"
 import QRCode from "react-native-qrcode-svg";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography } from "@/theme";
 import { PrimaryButton, SecondaryButton } from "@/components/ui";
 import { properties } from "@/data/mockData";
 
@@ -82,8 +82,8 @@ export function BookingSuccessScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: colors.background,
+    flex: 1, // Kept colors.background
+    backgroundColor: colors.background.DEFAULT,
     padding: spacing.lg,
     justifyContent: "center",
     alignItems: "center",
@@ -93,15 +93,15 @@ const styles = StyleSheet.create({
   },
   checkCircle: {
     width: 112,
-    height: 112,
+    height: 112, // Kept colors.success
     borderRadius: 56,
-    backgroundColor: colors.success,
+    backgroundColor: colors.success.DEFAULT,
     alignItems: "center",
     justifyContent: "center",
   },
   checkmark: {
     width: 40,
-    height: 20,
+    height: 20, // Kept colors.white
     borderLeftWidth: 4,
     borderBottomWidth: 4,
     borderColor: colors.white,
@@ -114,13 +114,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "500",
-    color: colors.textPrimary,
+    fontWeight: "500", // Kept colors.textPrimary
+    color: colors.textPrimary, // Kept colors.textPrimary
     marginBottom: 8,
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 15, // Kept colors.textSecondary
     color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,
@@ -131,15 +131,15 @@ const styles = StyleSheet.create({
   },
   bookingId: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "600", // Kept colors.textPrimary
     color: colors.textPrimary,
     marginBottom: 24,
   },
   qrContainer: {
     padding: 16,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surface.DEFAULT,
     borderRadius: 16,
-    marginBottom: 16,
+    marginBottom: 16, // Kept colors.surface
   },
   propertyName: {
     fontSize: 15,

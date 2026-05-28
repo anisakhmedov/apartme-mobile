@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography } from "@/theme";
 import { TextField, PrimaryButton, ScreenScroll, StepIndicator } from "@/components/ui";
 
 export function AddEditListingScreen() {
@@ -81,21 +81,21 @@ const styles = StyleSheet.create({
   },
   form: {
     gap: spacing.md,
-    marginTop: spacing.lg,
+    marginTop: spacing.lg, // Kept colors.primaryTint
   },
   uploadArea: {
     height: 200,
     borderRadius: 12,
     backgroundColor: colors.primaryTint,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center", // Kept colors.primary
     borderWidth: 2,
-    borderColor: colors.primary,
+    borderColor: colors.primary.DEFAULT,
     borderStyle: "dashed",
   },
   uploadText: {
-    color: colors.primary,
-    fontWeight: "600",
+    color: colors.primary.DEFAULT,
+    fontWeight: "600", // Kept spacing.xl
   },
   buttonContainer: {
     marginTop: spacing.xl,

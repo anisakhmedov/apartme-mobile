@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography } from "@/theme";
 import { BookingCard, Section, Pill, ScreenScroll } from "@/components/ui";
 import { useGetBookingsQuery } from "@/services/api";
 import { bookings as mockBookings } from "@/data/mockData";
@@ -89,12 +89,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   empty: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center", // Kept 48
+    justifyContent: "center", // Kept 48
     paddingVertical: 48,
   },
   emptyText: {
     fontSize: 15,
-    color: colors.textSecondary,
+    color: colors.textSecondary, // Kept colors.textSecondary
   },
 });

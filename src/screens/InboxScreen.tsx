@@ -7,14 +7,14 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import { messages as mockMessages, users } from "@/data/mockData";
 import { AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
-import { ConversationRow, EmptyState, GlassContainer, ScreenScroll } from "@/components/ui";
+import { ConversationRow, EmptyState, GlassContainer, ScreenScroll } from "@/components/ui"; // Removed unused import of `colors`
 import { formatTime } from "./index";
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.background, // Kept theme.colors.background
     },
     background: {
       ...StyleSheet.absoluteFillObject,
@@ -22,7 +22,7 @@ const createStyles = (theme: AppTheme) =>
     ambientTop: {
       position: "absolute",
       top: -110,
-      right: -70,
+      right: -70, // Kept theme.colors.ambientTop
       width: 220,
       height: 220,
       borderRadius: 110,
@@ -31,7 +31,7 @@ const createStyles = (theme: AppTheme) =>
     ambientBottom: {
       position: "absolute",
       left: -80,
-      bottom: -120,
+      bottom: -120, // Kept theme.colors.ambientBottom
       width: 260,
       height: 260,
       borderRadius: 130,
@@ -39,35 +39,35 @@ const createStyles = (theme: AppTheme) =>
     },
     scrollContent: {
       paddingTop: spacing.md,
-      paddingBottom: spacing.xxxl,
+      paddingBottom: spacing.xxxl, // Kept spacing.xxxl
     },
     header: {
-      marginBottom: spacing.lg,
+      marginBottom: spacing.lg, // Kept typography.title
     },
     title: {
       ...typography.title,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     subtitle: {
       ...typography.body,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 8,
     },
     hintPanel: {
       borderRadius: 22,
-      marginBottom: spacing.xl,
-    },
+      marginBottom: spacing.xl, // Kept spacing.xl
+    }, // Kept spacing.lg
     hintContent: {
       padding: spacing.lg,
       gap: spacing.sm,
     },
     hintTitle: {
       ...typography.subheading,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     hintBody: {
       ...typography.body,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
     },
     list: {
       gap: spacing.sm,

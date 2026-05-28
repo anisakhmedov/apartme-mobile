@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Animated, { FadeIn, FadeInDown, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
+import { AppTheme, useAppTheme, spacing } from "@/theme";
 import {
   ToggleRow,
   Section,
@@ -26,12 +26,34 @@ import { logout } from "@/store/authSlice";
 const languageOptions = ["ru", "en", "uz"] as const;
 const currencyOptions = ["UZS", "USD", "EUR"] as const;
 
+const createStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: { // Kept theme.spacing.xl
+      paddingBottom: spacing.xl,
+    },
+    inlineChoices: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: spacing.sm,
+      paddingVertical: spacing.sm,
+    },
+    buttonContainer: {
+      padding: spacing.md,
+      gap: spacing.md,
+    },
+    deleteButton: {
+      marginTop: spacing.lg,
+    },
+  });
+
 export function SettingsScreen() {
   const navigation = useNavigation<any>();
   const parentNavigation = useNavigation<any>();
   const { t } = useTranslation("profile");
   const dispatch = useAppDispatch();
   const preferences = useAppSelector((state: any) => state.preferences);
+  const theme = useAppTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   return (
     <ScreenScroll contentContainerStyle={styles.container}>
@@ -141,22 +163,3 @@ export function SettingsScreen() {
     </ScreenScroll>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingBottom: spacing.xl,
-  },
-  inlineChoices: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.sm,
-    paddingVertical: spacing.sm,
-  },
-  buttonContainer: {
-    padding: spacing.md,
-    gap: spacing.md,
-  },
-  deleteButton: {
-    marginTop: spacing.lg,
-  },
-});

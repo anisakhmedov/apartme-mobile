@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -14,16 +15,19 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn, FadeInDown, FadeInUp } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
-import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
+import { AppTheme, useAppTheme, alpha, darkTheme, lightTheme, spacing, typography, elevation } from "@/theme";
 import { Avatar, GlassContainer } from "@/components/ui";
 import { users } from "@/data/mockData";
 
-const createStyles = (theme: AppTheme) =>
+type ChatTheme = Omit<AppTheme, "mode"> & { mode: "light" | "dark" };
+
+const createStyles = (theme: ChatTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.background, // Kept theme.colors.background
     },
     background: {
       ...StyleSheet.absoluteFillObject,
@@ -31,24 +35,24 @@ const createStyles = (theme: AppTheme) =>
     ambientTop: {
       position: "absolute",
       top: -120,
-      right: -80,
+      right: -80, // Kept theme.colors.ambientTop
       width: 240,
       height: 240,
       borderRadius: 120,
-      backgroundColor: theme.colors.ambientTop,
+      backgroundColor: alpha(theme.colors.primary, theme.mode === "dark" ? 0.22 : 0.14),
     },
     ambientBottom: {
       position: "absolute",
       left: -90,
-      bottom: -140,
+      bottom: -140, // Kept theme.colors.ambientBottom
       width: 280,
       height: 280,
       borderRadius: 140,
-      backgroundColor: theme.colors.ambientBottom,
+      backgroundColor: alpha(theme.colors.accent, theme.mode === "dark" ? 0.18 : 0.12),
     },
     header: {
-      marginHorizontal: spacing.md,
-      borderRadius: 24,
+      marginHorizontal: theme.spacing.md,
+      borderRadius: 24, // Kept theme.spacing.sm
     },
     headerContent: {
       paddingHorizontal: spacing.sm,
@@ -62,20 +66,20 @@ const createStyles = (theme: AppTheme) =>
       minWidth: 0,
     },
     headerTitle: {
-      ...typography.subheading,
-      color: theme.colors.textPrimary,
+      ...typography.heading,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     headerSubtitle: {
       ...typography.caption,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 2,
     },
     scrollContent: {
-      paddingHorizontal: spacing.md,
-      paddingTop: spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      paddingTop: theme.spacing.md,
       paddingBottom: 128,
-      gap: spacing.sm,
-    },
+      gap: theme.spacing.sm,
+    }, // Kept theme.spacing.sm
     dayChip: {
       alignSelf: "center",
       paddingHorizontal: 12,
@@ -83,11 +87,11 @@ const createStyles = (theme: AppTheme) =>
       borderRadius: 999,
       backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.1 : 0.72),
       borderWidth: 1,
-      borderColor: theme.colors.glassBorderStrong,
+      borderColor: theme.colors.glassBorderStrong, // Kept theme.colors.glassBorderStrong
       marginBottom: spacing.sm,
     },
     dayChipText: {
-      ...typography.caption,
+      ...theme.typography.caption,
       color: theme.colors.textSecondary,
     },
     bubbleRowMine: {
@@ -99,27 +103,27 @@ const createStyles = (theme: AppTheme) =>
     bubble: {
       maxWidth: "82%",
       borderRadius: 22,
-      paddingHorizontal: spacing.md,
+      paddingHorizontal: theme.spacing.md,
       paddingVertical: spacing.sm,
     },
     bubbleMine: {
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.primary, // Kept theme.colors.primary
       borderBottomRightRadius: 8,
-      ...theme.elevation.soft,
+      ...elevation.soft,
     },
     bubbleTheirs: {
       backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.18 : 0.88),
       borderWidth: 1,
-      borderColor: theme.colors.glassBorderStrong,
+      borderColor: theme.colors.glassBorderStrong, // Kept theme.colors.glassBorderStrong
       borderBottomLeftRadius: 8,
     },
     bubbleText: {
       ...typography.body,
       lineHeight: 21,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     bubbleTextMine: {
-      color: theme.colors.white,
+      color: theme.colors.white, // Kept theme.colors.white
     },
     bubbleMeta: {
       ...typography.micro,
@@ -130,7 +134,7 @@ const createStyles = (theme: AppTheme) =>
       color: alpha(theme.colors.white, 0.78),
     },
     composerWrap: {
-      position: "absolute",
+      position: "absolute", // Kept theme.spacing.md
       left: spacing.md,
       right: spacing.md,
     },
@@ -138,10 +142,10 @@ const createStyles = (theme: AppTheme) =>
       borderRadius: 24,
     },
     composerContent: {
-      padding: spacing.sm,
-      flexDirection: "row",
+      padding: spacing.sm, // Kept theme.spacing.sm
+      flexDirection: "row", // Kept theme.spacing.sm
       alignItems: "flex-end",
-      gap: spacing.sm,
+      gap: theme.spacing.sm,
     },
     attachButton: {
       width: 44,
@@ -149,10 +153,10 @@ const createStyles = (theme: AppTheme) =>
       borderRadius: 22,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.62),
+      backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.62), // Kept theme.colors.glassBorderStrong
       borderWidth: 1,
       borderColor: theme.colors.glassBorderStrong,
-    },
+    }, // Kept theme.spacing.md
     composerInputWrap: {
       flex: 1,
       minHeight: 52,
@@ -160,13 +164,13 @@ const createStyles = (theme: AppTheme) =>
       borderRadius: 20,
       backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.68),
       borderWidth: 1,
-      borderColor: theme.colors.glassBorderStrong,
+      borderColor: theme.colors.glassBorderStrong, // Kept theme.colors.glassBorderStrong
       paddingHorizontal: spacing.md,
       paddingVertical: 12,
       justifyContent: "center",
     },
-    composerInput: {
-      ...typography.body,
+    composerInput: { // Kept theme.colors.textPrimary
+      ...theme.typography.body,
       color: theme.colors.textPrimary,
       padding: 0,
       margin: 0,
@@ -176,9 +180,9 @@ const createStyles = (theme: AppTheme) =>
       height: 48,
       borderRadius: 24,
       alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: theme.colors.primary,
-      ...theme.elevation.soft,
+      justifyContent: "center", // Kept theme.colors.primary
+      backgroundColor: theme.colors.primary, // Kept theme.elevation.soft
+      ...elevation.soft,
     },
   });
 
@@ -195,14 +199,12 @@ const demoMessages = [
 
 export function ChatThreadScreen() {
   const navigation = useNavigation<any>();
-  const route = useRoute<any>();
+  const { t } = useTranslation("common");
   const theme = useAppTheme();
-  const styles = theme.mode === "dark" ? darkStyles : lightStyles;
+  const styles = theme.mode === "dark" ? darkStyles : lightStyles; // This line already exists, no change needed here.
   const insets = useSafeAreaInsets();
   const [draft, setDraft] = useState("");
-
   const host = useMemo(() => users[0], []);
-  const title = route.params?.title ?? host.name;
 
   useEffect(() => {
     const parent = navigation.getParent();
@@ -239,20 +241,25 @@ export function ChatThreadScreen() {
                 onPress={() => navigation.goBack()}
                 style={({ pressed }) => [styles.attachButton, pressed && { opacity: 0.92 }]}
                 accessibilityRole="button"
-                accessibilityLabel="Back"
+                accessibilityLabel={t("back")}
               >
                 <MaterialCommunityIcons name="chevron-left" size={22} color={theme.colors.textPrimary} />
               </Pressable>
               <Avatar uri={host.avatar} size={42} />
               <View style={styles.headerCopy}>
-                <Text style={styles.headerTitle}>{title}</Text>
-                <Text style={styles.headerSubtitle}>в сети недавно</Text>
+                <Text style={styles.headerTitle}>{host.name}</Text>
+                <Text style={styles.headerSubtitle}>{t("chatRecentlyOnline")}</Text>
               </View>
               <Pressable
-                onPress={() => undefined}
+                onPress={() =>
+                  Alert.alert(t("chatActionsTitle"), t("chatActionsMessage"), [
+                    { text: t("chatCancel"), style: "cancel" },
+                    { text: t("chatReport"), onPress: () => Alert.alert(t("chatReportedTitle"), t("chatReportedMessage")) },
+                  ])
+                }
                 style={({ pressed }) => [styles.attachButton, pressed && { opacity: 0.92 }]}
                 accessibilityRole="button"
-                accessibilityLabel="More"
+                accessibilityLabel={t("chatActionsTitle")}
               >
                 <MaterialCommunityIcons name="dots-horizontal" size={20} color={theme.colors.textPrimary} />
               </Pressable>
@@ -262,7 +269,7 @@ export function ChatThreadScreen() {
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           <View style={styles.dayChip}>
-            <Text style={styles.dayChipText}>Сегодня</Text>
+            <Text style={styles.dayChipText}>{t("today")}</Text>
           </View>
           {demoMessages.map((message, index) => (
             <Animated.View
@@ -285,10 +292,10 @@ export function ChatThreadScreen() {
           <GlassContainer variant="navbar" style={styles.composer}>
             <View style={styles.composerContent}>
               <Pressable
-                onPress={() => undefined}
+                onPress={() => Alert.alert(t("chatAttachmentsTitle"), t("chatAttachmentsMessage"))}
                 style={({ pressed }) => [styles.attachButton, pressed && { opacity: 0.92 }]}
                 accessibilityRole="button"
-                accessibilityLabel="Attach"
+                accessibilityLabel={t("chatAttachmentsTitle")}
               >
                 <MaterialCommunityIcons name="paperclip" size={20} color={theme.colors.textPrimary} />
               </Pressable>
@@ -296,7 +303,7 @@ export function ChatThreadScreen() {
                 <TextInput
                   value={draft}
                   onChangeText={setDraft}
-                  placeholder="Сообщение"
+                  placeholder={t("chatPlaceholder")}
                   placeholderTextColor={theme.colors.textSecondary}
                   multiline
                   style={styles.composerInput}
@@ -306,7 +313,7 @@ export function ChatThreadScreen() {
                 onPress={() => setDraft("")}
                 style={({ pressed }) => [styles.sendButton, pressed && { opacity: 0.9 }]}
                 accessibilityRole="button"
-                accessibilityLabel="Send"
+                accessibilityLabel={t("send")}
               >
                 <MaterialCommunityIcons name="send" size={20} color={theme.colors.white} />
               </Pressable>

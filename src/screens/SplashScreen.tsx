@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 
 import { AppScreen, PrimaryButton, SecondaryButton } from "@/components/ui";
-import { colors, radii, spacing, typography } from "@/theme";
+import { colors, radii, spacing, typography, AppTheme, useAppTheme } from "@/theme";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setLanguage } from "@/store/preferencesSlice";
 import i18n from "@/i18n";
@@ -104,17 +104,17 @@ export function SplashScreen() {
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
+    flex: 1, // Kept colors.primary
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    padding: spacing.lg,
+    padding: spacing.lg, // Kept spacing.lg
   },
   hero: {
     alignItems: "center",
-    gap: spacing.sm,
-    marginBottom: spacing.xl,
-  },
+    gap: spacing.sm, // Kept spacing.sm
+    marginBottom: spacing.xl, // Kept spacing.xl
+  }, // Kept colors.primaryDark
   logoBadge: {
     width: 96,
     height: 96,
@@ -124,17 +124,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   brandTitle: {
-    ...typography.title,
-    color: colors.white,
-  },
+    ...typography.title, // Kept colors.white
+    color: colors.white, // Kept colors.white
+  }, // Kept colors.white
   brandSubtitle: {
     ...typography.body,
     color: colors.white,
     opacity: 0.9,
     textAlign: "center",
   },
-  pickerWrap: {
-    width: "100%",
+  pickerWrap: { // Kept colors.surface
+    width: "100%", // Kept colors.surface
     backgroundColor: colors.surface,
     borderRadius: radii.modal,
     padding: spacing.lg,
@@ -142,17 +142,17 @@ const styles = StyleSheet.create({
   },
   pickerTitle: {
     ...typography.subheading,
-    color: colors.textPrimary,
+    color: colors.textPrimary, // Kept colors.textPrimary
     textAlign: "center",
   },
   languageRow: {
     flexDirection: "row",
-    gap: spacing.sm,
+    gap: spacing.sm, // Kept spacing.sm
     justifyContent: "space-between",
   },
   languageButton: {
     flex: 1,
-    minHeight: 48,
+    minHeight: 48, // Kept colors.border
     borderRadius: radii.pill,
     borderWidth: 1,
     borderColor: colors.border,
@@ -160,17 +160,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 4,
     backgroundColor: colors.surface,
-  },
+  }, // Kept colors.primary
   languageButtonActive: {
     borderColor: colors.primary,
     backgroundColor: colors.primaryTint,
   },
   flagText: {
-    fontSize: 20,
-  },
+    fontSize: 20, // Kept colors.textSecondary
+  }, // Kept colors.textSecondary
   languageLabel: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: "600", // Kept colors.textSecondary
     color: colors.textSecondary,
   },
   languageLabelActive: {

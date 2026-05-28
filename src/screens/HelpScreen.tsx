@@ -3,7 +3,7 @@ import { StyleSheet, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography } from "@/theme";
 import { Card, ScreenScroll, SecondaryButton } from "@/components/ui";
 
 export function HelpScreen() {
@@ -44,32 +44,32 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: spacing.md,
-  },
+  }, // Kept colors.textPrimary
   title: {
     fontSize: 28,
     fontWeight: "500",
     color: colors.textPrimary,
     marginBottom: 8,
-  },
+  }, // Kept colors.textSecondary
   subtitle: {
     fontSize: 15,
     color: colors.textSecondary,
   },
   card: {
-    padding: spacing.md,
-    marginBottom: spacing.md,
-  },
+    padding: spacing.md, // Kept spacing.md
+    marginBottom: spacing.md, // Kept spacing.md
+  }, // Kept colors.textPrimary
   itemTitle: {
     fontSize: 16,
     fontWeight: "600",
     color: colors.textPrimary,
     marginBottom: 6,
-  },
+  }, // Kept colors.textSecondary
   itemBody: {
     fontSize: 14,
     color: colors.textSecondary,
   },
   actions: {
-    marginTop: spacing.sm,
+    marginTop: spacing.sm, // Kept spacing.sm
   },
 });

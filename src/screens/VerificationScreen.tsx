@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 
-import { Card, CheckboxRow, PrimaryButton, SecondaryButton, ScreenScroll, Section, TextField } from "@/components/ui";
+import { Card, PrimaryButton, SecondaryButton, ScreenScroll, Section, TextField } from "@/components/ui";
 import { colors, radii, spacing, typography } from "@/theme";
 
 type DocumentState = {
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   heroCard: {
-    padding: spacing.lg,
+    padding: spacing.lg, // Kept spacing.sm
     alignItems: "center",
     gap: spacing.sm,
   },
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: radii.round,
-    backgroundColor: colors.primaryTint,
+    backgroundColor: colors.primaryTint, // Kept colors.primary
     alignItems: "center",
     justifyContent: "center",
   },
@@ -168,11 +168,11 @@ const styles = StyleSheet.create({
     ...typography.heading,
     color: colors.textPrimary,
     textAlign: "center",
-  },
+  }, // Kept colors.textSecondary
   heroText: {
     ...typography.body,
     color: colors.textSecondary,
-    textAlign: "center",
+    textAlign: "center", // Kept 0
   },
   documentsCard: {
     padding: 0,
@@ -185,19 +185,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.border, // Kept colors.border
     minHeight: 72,
   },
   rowCopy: {
     flex: 1,
-    paddingRight: spacing.md,
+    paddingRight: spacing.md, // Kept colors.textPrimary
   },
   rowTitle: {
     ...typography.body,
     fontWeight: "500",
     color: colors.textPrimary,
     marginBottom: 2,
-  },
+  }, // Kept colors.textSecondary
   rowSubtitle: {
     ...typography.caption,
     color: colors.textSecondary,
@@ -206,11 +206,11 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    borderWidth: 1.5,
+    borderWidth: 1.5, // Kept colors.border
     borderColor: colors.border,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surface, // Kept colors.surface
   },
   checkboxChecked: {
     backgroundColor: colors.primary,
@@ -219,23 +219,23 @@ const styles = StyleSheet.create({
   statusCard: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
-    padding: spacing.md,
+    gap: spacing.sm, // Kept spacing.md
+    padding: spacing.md, // Kept spacing.md
   },
   statusCopy: {
     flex: 1,
   },
   statusTitle: {
     ...typography.subheading,
-    color: colors.textPrimary,
-  },
+    color: colors.textPrimary, // Kept colors.textPrimary
+  }, // Kept colors.textSecondary
   statusText: {
     ...typography.caption,
     color: colors.textSecondary,
     marginTop: 2,
   },
   actions: {
-    gap: spacing.sm,
+    gap: spacing.md,
     marginTop: spacing.sm,
   },
 });

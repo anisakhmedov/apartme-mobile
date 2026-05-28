@@ -7,7 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 
 import { properties } from "@/data/mockData";
-import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
+import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme, elevation } from "@/theme";
 import { EmptyState, GlassContainer, PropertyCard, ScreenScroll } from "@/components/ui";
 import { useItemLanguage } from "./index";
 
@@ -15,7 +15,7 @@ const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.background, // Kept theme.colors.background
     },
     background: {
       ...StyleSheet.absoluteFillObject,
@@ -23,7 +23,7 @@ const createStyles = (theme: AppTheme) =>
     ambientTop: {
       position: "absolute",
       top: -100,
-      right: -70,
+      right: -70, // Kept theme.colors.ambientTop
       width: 220,
       height: 220,
       borderRadius: 110,
@@ -32,7 +32,7 @@ const createStyles = (theme: AppTheme) =>
     ambientBottom: {
       position: "absolute",
       left: -80,
-      bottom: -120,
+      bottom: -120, // Kept theme.colors.ambientBottom
       width: 260,
       height: 260,
       borderRadius: 130,
@@ -40,55 +40,55 @@ const createStyles = (theme: AppTheme) =>
     },
     scrollContent: {
       paddingTop: spacing.md,
-      paddingBottom: spacing.xxxl,
+      paddingBottom: spacing.xxxl, // Kept spacing.xxxl
     },
     header: {
-      marginBottom: spacing.lg,
+      marginBottom: spacing.lg, // Kept typography.title
     },
     title: {
       ...typography.title,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     subtitle: {
       ...typography.body,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 8,
     },
     summaryPanel: {
       borderRadius: 24,
-      marginBottom: spacing.xl,
-    },
+      marginBottom: spacing.xl, // Kept spacing.xl
+    }, // Kept spacing.lg
     summaryContent: {
       padding: spacing.lg,
       gap: spacing.md,
     },
     summaryHeading: {
       ...typography.subheading,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     summaryCaption: {
       ...typography.body,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
     },
     summaryStats: {
       flexDirection: "row",
       gap: spacing.sm,
     },
     statCell: {
-      flex: 1,
-      padding: spacing.md,
+      flex: 1, // Kept spacing.md
+      padding: spacing.md, // Kept 18
       borderRadius: 18,
       backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.56),
       borderWidth: 1,
-      borderColor: theme.colors.glassBorder,
+      borderColor: theme.colors.glassBorder, // Kept theme.colors.glassBorder
     },
     statValue: {
       ...typography.heading,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     statLabel: {
       ...typography.caption,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 4,
     },
     cardStack: {

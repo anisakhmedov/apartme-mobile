@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 
 import { AppScreen, PrimaryButton, SecondaryButton, TextField } from "@/components/ui";
-import { colors, spacing, typography } from "@/theme";
+import { colors, spacing, typography, radii } from "@/theme";
 import { useAppDispatch } from "@/store";
 import { persistAuth, setUser } from "@/store/authSlice";
 import { users } from "@/data/mockData";
 
 export function LoginScreen() {
+  const { t } = useTranslation("auth");
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
   const [emailOrPhone, setEmailOrPhone] = useState("");
@@ -20,7 +22,7 @@ export function LoginScreen() {
 
   const handleLogin = async () => {
     if (!emailOrPhone.trim() || !password.trim()) {
-      setApiError("Заполните email и пароль");
+      setApiError(t("loginFillRequired"));
       return;
     }
 
@@ -39,31 +41,31 @@ export function LoginScreen() {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.logoText}>SamarkandRent</Text>
-          <Text style={styles.subtitle}>Войдите в свой аккаунт</Text>
+          <Text style={styles.subtitle}>{t("loginSubtitle")}</Text>
         </View>
 
         <View style={styles.form}>
-          <TextField label="Email или телефон" placeholder="Email или телефон" value={emailOrPhone} onChangeText={setEmailOrPhone} keyboardType="email-address" autoCapitalize="none" />
+          <TextField label={t("emailOrPhone")} placeholder={t("emailOrPhone")} value={emailOrPhone} onChangeText={setEmailOrPhone} keyboardType="email-address" autoCapitalize="none" />
           <View>
-            <TextField label="Пароль" placeholder="Пароль" value={password} onChangeText={setPassword} secureTextEntry={secureTextEntry} />
+            <TextField label={t("password")} placeholder={t("password")} value={password} onChangeText={setPassword} secureTextEntry={secureTextEntry} />
             <Pressable onPress={() => setSecureTextEntry((current) => !current)} style={styles.toggleLink} accessibilityRole="button">
-              <Text style={styles.toggleLinkText}>{secureTextEntry ? "Показать" : "Скрыть"}</Text>
+              <Text style={styles.toggleLinkText}>{secureTextEntry ? t("showPassword") : t("hidePassword")}</Text>
             </Pressable>
           </View>
 
           {apiError ? <Text style={styles.errorText}>{apiError}</Text> : null}
 
-          <PrimaryButton label={loading ? "Входим..." : "Войти"} onPress={handleLogin} loading={loading} disabled={!emailOrPhone.trim() || !password.trim()} />
-          <SecondaryButton label="Войти через Google" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)} />
+          <PrimaryButton label={loading ? t("loginLoading") : t("login")} onPress={handleLogin} loading={loading} disabled={!emailOrPhone.trim() || !password.trim()} />
+          <SecondaryButton label={t("loginWithGoogle")} onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)} />
 
           <Pressable onPress={() => navigation.navigate("ForgotPassword")} style={styles.forgotLink} accessibilityRole="button">
-            <Text style={styles.forgotText}>Забыли пароль?</Text>
+            <Text style={styles.forgotText}>{t("forgotPassword")}</Text>
           </Pressable>
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Нет аккаунта? </Text>
+            <Text style={styles.footerText}>{t("noAccount")} </Text>
             <Pressable onPress={() => navigation.navigate("Register")} accessibilityRole="button">
-              <Text style={styles.registerLink}>Зарегистрироваться</Text>
+              <Text style={styles.registerLink}>{t("register")}</Text>
             </Pressable>
           </View>
         </View>
@@ -71,67 +73,3 @@ export function LoginScreen() {
     </AppScreen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    padding: spacing.lg,
-    justifyContent: "center",
-  },
-  header: {
-    marginBottom: spacing.xl,
-  },
-  logoText: {
-    ...typography.title,
-    color: colors.textPrimary,
-    textAlign: "center",
-    marginBottom: spacing.xs,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: "center",
-  },
-  form: {
-    gap: spacing.md,
-  },
-  toggleLink: {
-    alignSelf: "flex-end",
-    marginTop: spacing.xs,
-  },
-  toggleLinkText: {
-    ...typography.caption,
-    color: colors.primary,
-    fontWeight: "600",
-  },
-  errorText: {
-    ...typography.caption,
-    color: colors.error,
-  },
-  forgotLink: {
-    alignSelf: "center",
-    paddingVertical: spacing.sm,
-  },
-  forgotText: {
-    ...typography.body,
-    color: colors.primary,
-    fontWeight: "600",
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: spacing.sm,
-  },
-  footerText: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  registerLink: {
-    ...typography.body,
-    color: colors.primary,
-    fontWeight: "700",
-    textDecorationLine: "underline",
-  },
-});

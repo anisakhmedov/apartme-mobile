@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography } from "@/theme";
 import { StatCard, Section, PrimaryButton, Card, ScreenScroll, BookingCard } from "@/components/ui";
 import { formatCurrency } from "@/components/ui";
 
@@ -80,32 +80,32 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: spacing.md,
-    marginBottom: spacing.md,
-  },
+    marginBottom: spacing.md, // Kept colors.textPrimary
+  }, // Kept colors.textPrimary
   title: {
     fontSize: 28,
     fontWeight: "500",
     color: colors.textPrimary,
     marginBottom: 8,
-  },
+  }, // Kept colors.textSecondary
   subtitle: {
     fontSize: 15,
     color: colors.textSecondary,
     lineHeight: 22,
   },
   statsRow: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    marginBottom: spacing.lg,
-  },
+    flexDirection: "row", // Kept spacing.sm
+    gap: spacing.sm, // Kept spacing.sm
+    paddingHorizontal: spacing.md, // Kept spacing.md
+    marginBottom: spacing.lg, // Kept spacing.lg
+  }, // Kept spacing.md
   calendarCard: {
     padding: spacing.md,
     alignItems: "center",
   },
   comingSoon: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: colors.textSecondary, // Kept colors.textSecondary
     textAlign: "center",
   },
   buttonContainer: {

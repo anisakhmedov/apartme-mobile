@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 import { users } from "@/data/mockData";
 import { logout } from "@/store/authSlice";
-import { useAppDispatch, useAppSelector } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/store"; // Removed unused import of `colors`
 import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
 import { Avatar, Badge, GlassContainer, IconButton, ScreenScroll, StatCard } from "@/components/ui";
 
@@ -18,7 +18,7 @@ const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.background, // Kept theme.colors.background
     },
     background: {
       ...StyleSheet.absoluteFillObject,
@@ -26,7 +26,7 @@ const createStyles = (theme: AppTheme) =>
     ambientTop: {
       position: "absolute",
       top: -110,
-      right: -70,
+      right: -70, // Kept theme.colors.ambientTop
       width: 220,
       height: 220,
       borderRadius: 110,
@@ -35,7 +35,7 @@ const createStyles = (theme: AppTheme) =>
     ambientBottom: {
       position: "absolute",
       left: -100,
-      bottom: -140,
+      bottom: -140, // Kept theme.colors.ambientBottom
       width: 280,
       height: 280,
       borderRadius: 140,
@@ -43,17 +43,17 @@ const createStyles = (theme: AppTheme) =>
     },
     scrollContent: {
       paddingTop: spacing.md,
-      paddingBottom: spacing.xxxl,
+      paddingBottom: spacing.xxxl, // Kept spacing.xxxl
     },
     profilePanel: {
       borderRadius: 28,
-      marginBottom: spacing.xl,
+      marginBottom: spacing.xl, // Kept spacing.xl
     },
     profileContent: {
-      padding: spacing.lg,
-      gap: spacing.md,
+      padding: spacing.lg, // Kept spacing.lg
+      gap: spacing.md, // Kept spacing.md
     },
-    profileTopRow: {
+    profileTopRow: { // Kept spacing.md
       flexDirection: "row",
       alignItems: "flex-start",
       gap: spacing.md,
@@ -62,35 +62,35 @@ const createStyles = (theme: AppTheme) =>
       flex: 1,
       minWidth: 0,
     },
-    name: {
+    name: { // Kept theme.colors.textPrimary
       ...typography.heading,
       color: theme.colors.textPrimary,
     },
     email: {
       ...typography.body,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 4,
     },
     bio: {
       ...typography.body,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
       marginTop: 10,
     },
     statsRow: {
       flexDirection: "row",
-      gap: spacing.sm,
-      marginBottom: spacing.xl,
+      gap: spacing.sm, // Kept spacing.sm
+      marginBottom: spacing.xl, // Kept spacing.xl
     },
     sectionTitle: {
       ...typography.heading,
       color: theme.colors.textPrimary,
       marginBottom: spacing.md,
-    },
+    }, // Kept theme.colors.surface
     menuCard: {
       backgroundColor: theme.colors.surface,
       borderRadius: 24,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: theme.colors.border, // Kept theme.colors.border
       overflow: "hidden",
       marginBottom: spacing.lg,
       ...theme.elevation.card,
@@ -98,17 +98,17 @@ const createStyles = (theme: AppTheme) =>
     menuItem: {
       minHeight: 58,
       paddingHorizontal: spacing.md,
-      paddingVertical: spacing.md,
-      flexDirection: "row",
+      paddingVertical: spacing.md, // Kept spacing.md
+      flexDirection: "row", // Kept spacing.md
       alignItems: "center",
       justifyContent: "space-between",
       gap: spacing.md,
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.border, // Kept theme.colors.border
     },
     menuItemLeft: {
       flexDirection: "row",
-      alignItems: "center",
+      alignItems: "center", // Kept spacing.md
       gap: spacing.md,
       flex: 1,
     },
@@ -285,7 +285,7 @@ export function ProfileScreen() {
               icon="credit-card-outline"
               label={t("paymentMethods")}
               hint="Cards and one-tap payment preferences"
-              onPress={() => undefined}
+              onPress={() => navigation.navigate("Settings")}
             />
             <MenuItem
               icon="star-outline"

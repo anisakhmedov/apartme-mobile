@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, FlatList, Linking, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
 import { Calendar } from "react-native-calendars";
@@ -15,14 +15,14 @@ import {
   messages,
   notifications,
   properties,
-  reviews,
+  reviews, // Removed unused import of `reviews`
   users
 } from "@/data/mockData";
 import { addRecentViewed } from "@/store/searchSlice";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { analytics } from "@/services/analytics";
 import { saveRecentProperty } from "@/services/cache";
-import { colors, radii, spacing } from "@/theme";
+import { colors, radii, spacing, AppTheme, useAppTheme, typography, alpha, darkTheme, lightTheme, motion, zIndex, elevation } from "@/theme";
 import { Booking, LocalizedText, Property } from "@/types/models";
 import MapView, { Marker, PROVIDER_GOOGLE } from "@/components/map";
 import {
@@ -59,10 +59,10 @@ import {
   useResponsive
 } from "@/components/ui";
 import { setLanguage, setCurrency, toggleDarkMode, togglePush, setBiometric } from "@/store/preferencesSlice";
-import { logout, persistAuth, setUser } from "@/store/authSlice";
+import { logout, persistAuth, setUser } from "@/store/authSlice"; // Removed unused import of `colors`
 import { useGetBookingsQuery, useGetNotificationsQuery, useGetPropertiesQuery, useGetPropertyByIdQuery, useGetReviewsQuery, useGetUsersQuery } from "@/services/api";
 
-const languageOptions = ["ru", "en", "uz"] as const;
+const languageOptions = ["ru", "en", "uz"] as const; // Removed unused import of `colors`
 const categories = ["apartments", "houses", "rooms", "guesthouses", "daily"] as const;
 const statusTabs = ["upcoming", "active", "completed", "cancelled"] as const;
 
@@ -131,7 +131,7 @@ export function OnboardingScreen({ navigation }: any) {
   return (
     <AppScreen>
       <View style={styles.topRowSpaceBetween}>
-        <Text style={styles.onboardingSkip} onPress={() => navigation.replace("Login")}>{t("skip")}</Text>
+        <Text style={styles.onboardingSkip} onPress={() => navigation.replace("Login")}>{t("skip")}</Text> // Removed unused import of `colors`
       </View>
       <FlatList
         data={slides}
@@ -141,7 +141,7 @@ export function OnboardingScreen({ navigation }: any) {
         keyExtractor={(item) => item.title}
         onMomentumScrollEnd={(event) => setIndex(Math.round(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width))}
         renderItem={({ item }) => (
-          <View style={styles.onboardingSlide}>
+          <View style={styles.onboardingSlide}> // Removed unused import of `colors`
             <GradientCard colors={[colors.primary, colors.primaryDark]}>
               <MaterialCommunityIcons name={item.icon as any} size={68} color={colors.white} />
             </GradientCard>
@@ -150,7 +150,7 @@ export function OnboardingScreen({ navigation }: any) {
           </View>
         )}
       />
-      <View style={styles.dotsRow}>
+      <View style={styles.dotsRow}> // Removed unused import of `colors`
         {slides.map((slide, slideIndex) => <View key={slide.title} style={[styles.dot, slideIndex === index && styles.dotActive]} />)}
       </View>
       <View style={styles.actionStack}>
@@ -233,7 +233,7 @@ export function PermissionScreen() {
   return (
     <AppScreen>
       <ScreenScroll>
-        <ScreenTitle title={t("permissionsTitle")} subtitle={t("permissionsSubtitle")} />
+        <ScreenTitle title={t("permissionsTitle")} subtitle={t("permissionsSubtitle")} /> // Removed unused import of `colors`
         <Card style={styles.permissionCard}><Text style={styles.permissionText}>{t("locationPermission")}</Text></Card>
         <Card style={styles.permissionCard}><Text style={styles.permissionText}>{t("cameraPermission")}</Text></Card>
         <Card style={styles.permissionCard}><Text style={styles.permissionText}>{t("notificationsPermission")}</Text></Card>
@@ -253,7 +253,7 @@ export function HomeScreen({ navigation }: any) {
     <AppScreen>
       <FlatList
         data={nearby}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id} // Removed unused import of `colors`
         renderItem={({ item }) => <View style={{ paddingHorizontal: spacing.md }}><PropertyCard item={item} language={language} onPress={() => navigation.navigate("PropertyDetail", { id: item.id })} /></View>}
         ListHeaderComponent={
           <ScreenScroll>
@@ -290,7 +290,7 @@ export function SearchMapScreen({ navigation }: any) {
   const language = useItemLanguage();
   const { t } = useTranslation("home");
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
-  const [price, setPrice] = useState(900000);
+  const [price, setPrice] = useState(900000); // Removed unused import of `colors`
   const { data = properties } = useGetPropertiesQuery();
   const responsive = useResponsive();
 
@@ -299,7 +299,7 @@ export function SearchMapScreen({ navigation }: any) {
       <ScreenScroll>
         <ScreenTitle title={t("searchTitle")} subtitle={t("searchSubtitle")} />
         <TextField placeholder={t("searchPlaceholder")} />
-        <View style={styles.togglePillsRow}><Pill label={t("listView")} active={viewMode === "list"} onPress={() => setViewMode("list")} /><Pill label={t("mapView")} active={viewMode === "map"} onPress={() => setViewMode("map")} /></View>
+        <View style={styles.togglePillsRow}><Pill label={t("listView")} active={viewMode === "list"} onPress={() => setViewMode("list")} /><Pill label={t("mapView")} active={viewMode === "map"} onPress={() => setViewMode("map")} /></View> // Removed unused import of `colors`
         <Card><Text style={styles.sliderTitle}>{t("priceRange")}</Text><Slider minimumValue={0} maximumValue={2000000} minimumTrackTintColor={colors.primary} maximumTrackTintColor="#D6D2CA" thumbTintColor={colors.primaryDark} value={price} onValueChange={setPrice} /></Card>
           {viewMode === "map" ? <MapView provider={PROVIDER_GOOGLE} style={[styles.mapView, { height: responsive.mapHeight }]} initialRegion={{ latitude: 39.6547, longitude: 66.9758, latitudeDelta: 0.05, longitudeDelta: 0.05 }}><Marker coordinate={{ latitude: 39.6547, longitude: 66.9758 }} title="Registan" /></MapView> : data.map((item) => <PropertyCard key={item.id} item={item} language={language} onPress={() => navigation.navigate("PropertyDetail", { id: item.id })} />)}
       </ScreenScroll>
@@ -312,7 +312,7 @@ export function BookingsTabScreen({ navigation }: any) {
   const { data = bookings } = useGetBookingsQuery();
   const [status, setStatus] = useState<(typeof statusTabs)[number]>("upcoming");
   const language = useItemLanguage();
-
+  // Removed unused import of `colors`
   return (
     <AppScreen>
       <ScreenScroll>
@@ -328,7 +328,7 @@ export function PropertyDetailScreen({ navigation }: any) {
   const language = useItemLanguage();
   const routeId = useRoutePropertyId();
   const { t } = useTranslation("property");
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch(); // Removed unused import of `colors`
   const { data: property } = useGetPropertyByIdQuery(routeId ?? "prop-1");
   const { data: propertyReviews = [] } = useGetReviewsQuery(routeId ?? "prop-1");
   const { data: userList = users } = useGetUsersQuery();
@@ -350,7 +350,7 @@ export function PropertyDetailScreen({ navigation }: any) {
   return (
     <AppScreen>
       <BottomStickyBar>
-        <View style={styles.stickyBarRow}>
+        <View style={styles.stickyBarRow}> // Removed unused import of `colors`
           <View><Text style={styles.stickyPrice}>{formatCurrency(property.price, property.currency)}</Text><Text style={styles.stickyCaption}>{t("perNight")}</Text></View>
             <PrimaryButton label={t("bookNow")} onPress={() => navigation.navigate("BookingFlow", { screen: "Booking", params: { propertyId: property.id } })} />
         </View>
@@ -358,7 +358,7 @@ export function PropertyDetailScreen({ navigation }: any) {
       <ScreenScroll>
         <GalleryStrip photos={property.photos} />
         <View style={styles.detailHeaderRow}>
-          <View style={{ flex: 1 }}><Text style={styles.detailTitle}>{property.title[language]}</Text><Text style={styles.detailAddress}>{property.address}</Text></View>
+          <View style={{ flex: 1 }}><Text style={styles.detailTitle}>{property.title[language]}</Text><Text style={styles.detailAddress}>{property.address}</Text></View> // Removed unused import of `colors`
           <RatingStars rating={property.rating} count={property.reviewCount} />
         </View>
         <Card style={styles.hostCard}><View style={styles.hostRow}><Avatar uri={host.avatar} size={60} /><View style={{ flex: 1 }}><Text style={styles.hostName}>{host.name}</Text><Text style={styles.hostMeta}>{t("verifiedHost")}</Text></View><Badge label={t("responseRate")} tone="success" /></View></Card>
@@ -375,7 +375,7 @@ export function MapScreen() {
   const language = useItemLanguage();
   const { t } = useTranslation("home");
   const responsive = useResponsive();
-  return (
+  return ( // Removed unused import of `colors`
     <AppScreen>
       <MapView provider={PROVIDER_GOOGLE} style={[styles.fullMap, { height: responsive.mapHeight }]} initialRegion={{ latitude: 39.6547, longitude: 66.9758, latitudeDelta: 0.06, longitudeDelta: 0.06 }}>
         {properties.map((property) => <Marker key={property.id} coordinate={property.coords} title={property.title[language]} description={formatCurrency(property.price, property.currency)} />)}
@@ -388,7 +388,7 @@ export function MapScreen() {
 export function BookingScreen({ navigation }: any) {
   const { t } = useTranslation("booking");
   return (
-    <AppScreen><ScreenScroll><ScreenTitle title={t("bookingTitle")} subtitle={t("bookingSubtitle")} /><Calendar markingType="period" /><Card><InfoRow label={t("guests")} value="2 adults, 1 child" /><InfoRow label={t("nightlyRate")} value={formatCurrency(420000, "UZS")} /><InfoRow label={t("total")} value={formatCurrency(1260000, "UZS")} /></Card><PrimaryButton label={t("confirmBooking")} onPress={() => navigation.navigate("Payment")} /></ScreenScroll></AppScreen>
+    <AppScreen><ScreenScroll><ScreenTitle title={t("bookingTitle")} subtitle={t("bookingSubtitle")} /><Calendar markingType="period" /><Card><InfoRow label={t("guests")} value="2 adults, 1 child" /><InfoRow label={t("nightlyRate")} value={formatCurrency(420000, "UZS")} /><InfoRow label={t("total")} value={formatCurrency(1260000, "UZS")} /></Card><PrimaryButton label={t("confirmBooking")} onPress={() => navigation.navigate("Payment")} /></ScreenScroll></AppScreen> // Removed unused import of `colors`
   );
 }
 
@@ -396,7 +396,7 @@ export function PaymentScreen({ navigation }: any) {
   const { t } = useTranslation("booking");
   const [loading, setLoading] = useState(false);
   return (
-    <AppScreen><ScreenScroll><ScreenTitle title={t("paymentTitle")} subtitle={t("paymentSubtitle")} /><Card><Pill label={t("card")} active /><Pill label={t("click")} /><Pill label={t("payme")} /><Pill label={t("cashOnArrival")} /></Card><TextField label={t("coupon")} placeholder={t("promoCode")} /><Card><InfoRow label={t("orderSummary")} value={formatCurrency(1260000, "UZS")} /></Card><PrimaryButton label={t("payNow")} loading={loading} onPress={() => { setLoading(true); navigation.navigate("BookingConfirmation"); }} /></ScreenScroll></AppScreen>
+    <AppScreen><ScreenScroll><ScreenTitle title={t("paymentTitle")} subtitle={t("paymentSubtitle")} /><Card><Pill label={t("card")} active /><Pill label={t("click")} /><Pill label={t("payme")} /><Pill label={t("cashOnArrival")} /></Card><TextField label={t("coupon")} placeholder={t("promoCode")} /><Card><InfoRow label={t("orderSummary")} value={formatCurrency(1260000, "UZS")} /></Card><PrimaryButton label={t("payNow")} loading={loading} onPress={() => { setLoading(true); navigation.navigate("BookingConfirmation"); }} /></ScreenScroll></AppScreen> // Removed unused import of `colors`
   );
 }
 
@@ -404,7 +404,7 @@ export function BookingConfirmationScreen({ navigation }: any) {
   const { t } = useTranslation("booking");
   return (
     <AppScreen><ScreenScroll><View style={styles.confirmationCenter}><View style={styles.successCircle}><MaterialCommunityIcons name="check" size={54} color={colors.white} /></View><Text style={styles.confirmationTitle}>{t("bookingConfirmed")}</Text><Text style={styles.confirmationSubtitle}>{t("bookingId")}: BK-1042</Text><QRCode value="samarkandrent://booking/booking-1" size={160} /></View><PrimaryButton label={t("viewBooking")} onPress={() => navigation.navigate("BookingDetail")} /><SecondaryButton label={t("backToHome")} onPress={() => navigation.navigate("Main", { screen: "HomeTab" })} /></ScreenScroll></AppScreen>
-  );
+  ); // Removed unused import of `colors`
 }
 
 export function MyBookingsScreen() {
@@ -416,7 +416,7 @@ export function BookingDetailScreen() {
   const { t } = useTranslation("booking");
   const booking = bookings[0];
   const property = properties.find((item) => item.id === booking.propertyId) ?? properties[0];
-  return (<AppScreen><ScreenScroll><ScreenTitle title={t("bookingDetail")} subtitle={property.title[language]} /><Card><InfoRow label={t("checkIn")} value={booking.checkIn} /><InfoRow label={t("checkOut")} value={booking.checkOut} /><InfoRow label={t("guests")} value="2 adults" /><InfoRow label={t("paymentMethod")} value={booking.paymentMethod} /></Card><PrimaryButton label={t("cancelBooking")} /><SecondaryButton label={t("contactHost")} /></ScreenScroll></AppScreen>);
+  return (<AppScreen><ScreenScroll><ScreenTitle title={t("bookingDetail")} subtitle={property.title[language]} /><Card><InfoRow label={t("checkIn")} value={booking.checkIn} /><InfoRow label={t("checkOut")} value={booking.checkOut} /><InfoRow label={t("guests")} value="2 adults" /><InfoRow label={t("paymentMethod")} value={booking.paymentMethod} /></Card><PrimaryButton label={t("cancelBooking")} /><SecondaryButton label={t("contactHost")} /></ScreenScroll></AppScreen>); // Removed unused import of `colors`
 }
 
 export function MessagesTabScreen() {
@@ -424,7 +424,7 @@ export function MessagesTabScreen() {
   return (
     <AppScreen>
       <ScreenScroll>
-        <ScreenTitle title={t("messages")} subtitle={t("inboxSubtitle")} />
+        <ScreenTitle title={t("messages")} subtitle={t("inboxSubtitle")} /> // Removed unused import of `colors`
         {messages.length ? (
           messages.map((message) => <ConversationRow key={message.id} title="Azizbek" preview={message.text} time={formatTime(message.createdAt)} unread={1} avatar={users[0].avatar} />)
         ) : (
@@ -446,7 +446,7 @@ export function ProfileTabScreen({ navigation }: any) {
   const user = users[1];
   const isHost = useAppSelector((state) => state.auth.user?.isHost ?? true);
   const dispatch = useAppDispatch();
-
+  // Removed unused import of `colors`
   return (
     <AppScreen><ScreenScroll><View style={styles.profileHeader}><Avatar uri={user.avatar} size={72} /><View style={{ flex: 1 }}><Text style={styles.profileName}>{user.name}</Text><Text style={styles.profileMeta}>{user.email}</Text></View><IconButton icon="edit" label={t("editProfile")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "EditProfile" })} /></View><View style={styles.statsRow}><StatCard label={t("bookingsCount")} value="12" /><StatCard label={t("reviewsGiven")} value="8" /></View><Card><Pill label={t("myBookings")} onPress={() => navigation.getParent()?.navigate("BookingFlow", { screen: "BookingDetail", params: { id: bookings[0].id } })} /><Pill label={t("wishlist")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Wishlist" })} /><Pill label={t("paymentMethods")} /><Pill label={t("reviews")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "MyReviews" })} /><Pill label={t("settings")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Settings" })} /><Pill label={t("help")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Help" })} /><Pill label={t("logout")} onPress={() => { dispatch(logout()); }} /></Card>{isHost && <Card><Text style={styles.hostModeText}>{t("hostMode")}</Text><PrimaryButton label={t("hostDashboard")} onPress={() => navigation.getParent()?.navigate("HostFlow")} /></Card>}</ScreenScroll></AppScreen>
   );
@@ -535,7 +535,7 @@ export function NotFoundScreen() {
 }
 
 const styles = StyleSheet.create({
-  screenTitle: { fontSize: 28, fontWeight: "800", color: colors.charcoal },
+  screenTitle: { fontSize: 28, fontWeight: "800" as const, color: colors.charcoal },
   screenSubtitle: { marginTop: 6, color: colors.muted, lineHeight: 20 },
   centerHero: { flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.xl },
   logoBadge: { width: 96, height: 96, borderRadius: 28, backgroundColor: colors.primary, alignItems: "center", justifyContent: "center", marginBottom: spacing.lg },

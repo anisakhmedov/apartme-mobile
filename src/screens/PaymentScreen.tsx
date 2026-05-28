@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useMemo, useState } from "react";
+import { View, StyleSheet, Text } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { colors, spacing } from "@/theme";
+import { AppTheme, useAppTheme, spacing, typography } from "@/theme";
 import {
   PrimaryButton,
-  SecondaryButton,
+  GlassContainer,
+  IconButton,
   Pill,
   TextField,
   Card,
@@ -16,10 +18,86 @@ import {
 } from "@/components/ui";
 import { formatCurrency } from "@/components/ui";
 
+const createStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: { // Changed from theme.spacing.md to spacing.md
+      padding: spacing.md,
+      paddingBottom: spacing.xl,
+    },
+    topBar: {
+      borderRadius: 22,
+      marginBottom: spacing.md,
+    },
+    topBarContent: {
+      padding: spacing.xs,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+    },
+    topBarTitle: {
+      fontSize: 18,
+      fontWeight: "700",
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
+    },
+    header: {
+      marginBottom: spacing.md,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: "500",
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 15,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
+      lineHeight: 22,
+    },
+    methodsContainer: {
+      gap: spacing.md,
+      marginBottom: spacing.lg,
+    },
+    paymentMethod: {
+      width: "100%",
+    },
+    cardDetails: {
+      gap: spacing.md,
+      marginBottom: spacing.lg,
+    },
+    cardRow: {
+      flexDirection: "row",
+      gap: theme.spacing.md,
+    },
+    halfInput: {
+      flex: 1,
+    },
+    couponContainer: {
+      marginBottom: spacing.lg,
+    },
+    summaryCard: {
+      marginBottom: spacing.lg,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: theme.colors.border, // Kept theme.colors.border
+      marginVertical: spacing.sm,
+    },
+    totalRow: {
+      marginTop: spacing.sm,
+    },
+    buttonContainer: {
+      marginTop: spacing.md,
+    },
+  });
+
 export function PaymentScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const insets = useSafeAreaInsets();
   const params = route.params || {};
+  const theme = useAppTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const [loading, setLoading] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("card");
 
@@ -52,6 +130,15 @@ export function PaymentScreen() {
 
   return (
     <ScreenScroll contentContainerStyle={styles.container}>
+      <Animated.View entering={FadeIn.duration(300)} style={{ paddingTop: Math.max(insets.top, theme.spacing.xs) }}>
+        <GlassContainer variant="navbar" style={styles.topBar}>
+          <View style={styles.topBarContent}>
+            <IconButton icon="arrow-back-ios-new" label="Назад" onPress={() => navigation.goBack()} />
+            <Text style={styles.topBarTitle}>Оплата</Text>
+          </View>
+        </GlassContainer>
+      </Animated.View>
+
       <Animated.View entering={FadeIn.duration(400)} style={styles.header}>
         <Animated.Text style={styles.title}>Оплата</Animated.Text>
         <Animated.Text style={styles.subtitle}>
@@ -135,59 +222,3 @@ export function PaymentScreen() {
     </ScreenScroll>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: spacing.md,
-    paddingBottom: spacing.xl,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "500",
-    color: colors.textPrimary,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: colors.textSecondary,
-    lineHeight: 22,
-  },
-  methodsContainer: {
-    gap: spacing.sm,
-    marginBottom: 24,
-  },
-  paymentMethod: {
-    width: "100%",
-  },
-  cardDetails: {
-    gap: spacing.md,
-    marginBottom: 24,
-  },
-  cardRow: {
-    flexDirection: "row",
-    gap: spacing.md,
-  },
-  halfInput: {
-    flex: 1,
-  },
-  couponContainer: {
-    marginBottom: 24,
-  },
-  summaryCard: {
-    marginBottom: 24,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginVertical: spacing.sm,
-  },
-  totalRow: {
-    marginTop: spacing.sm,
-  },
-  buttonContainer: {
-    marginTop: spacing.md,
-  },
-});

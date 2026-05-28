@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography } from "@/theme";
 import { TextField, PrimaryButton, SecondaryButton, ScreenScroll } from "@/components/ui";
 import { users } from "@/data/mockData";
 
@@ -86,33 +86,33 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: spacing.md,
-    marginBottom: spacing.md,
-  },
+    marginBottom: spacing.md, // Kept colors.textPrimary
+  }, // Kept colors.textPrimary
   title: {
     fontSize: 28,
     fontWeight: "500",
     color: colors.textPrimary,
     marginBottom: 8,
-  },
+  }, // Kept colors.textSecondary
   subtitle: {
     fontSize: 15,
     color: colors.textSecondary,
     lineHeight: 22,
   },
   form: {
-    padding: spacing.md,
-    gap: spacing.md,
+    padding: spacing.md, // Kept spacing.md
+    gap: spacing.md, // Kept spacing.md
   },
   field: {
     marginBottom: spacing.md,
-  },
+  }, // Kept 100
   bioField: {
     height: 100,
     textAlignVertical: "top",
   },
   buttonContainer: {
-    gap: spacing.md,
-    marginTop: spacing.lg,
+    gap: spacing.md, // Kept spacing.md
+    marginTop: spacing.lg, // Kept spacing.lg
   },
   secondaryButton: {
     marginTop: spacing.sm,

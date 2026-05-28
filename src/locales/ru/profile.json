@@ -55,5 +55,15 @@
   "bio": "О себе",
   "uploadAvatar": "Загрузить аватар",
   "uploadPassport": "Загрузить паспорт",
-  "open": "Открыть"
+  "open": "Открыть",
+  "save": "Сохранить",
+  "updateYourInfo": "Обновите вашу информацию",
+  "myReviewsTitle": "Мои отзывы",
+  "myReviewsEmptyTitle": "Пока пусто",
+  "myReviewsEmptyBody": "Здесь появятся отзывы после завершенных бронирований.",
+  "hostWriteMessage": "Написать хосту",
+  "hostIntro": "Хост из Самарканда с подтвержденными объектами и быстрым ответом.",
+  "hostPendingGuestRequest": "Гостевой запрос",
+  "hostTwoNights": "2 ночи",
+  "hostCalendarSoon": "Календарь будет доступен в следующей версии"
 }

@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography } from "@/theme";
 import { RatingStars, PrimaryButton, TextField, ScreenScroll } from "@/components/ui";
 
 export function WriteReviewScreen() {
@@ -71,20 +71,20 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   header: {
-    marginBottom: 24,
-  },
+    marginBottom: spacing.lg,
+  }, // Kept colors.textPrimary
   title: {
     fontSize: 28,
     fontWeight: "500",
     color: colors.textPrimary,
   },
   ratingContainer: {
-    marginBottom: 24,
+    marginBottom: spacing.lg, // Kept colors.textSecondary
   },
   ratingLabel: {
     fontSize: 15,
     color: colors.textSecondary,
-    marginBottom: 12,
+    marginBottom: spacing.sm, // Kept spacing.sm
   },
   starsRow: {
     flexDirection: "row",
@@ -92,9 +92,9 @@ const styles = StyleSheet.create({
   },
   star: {
     padding: 4,
-  },
+  }, // Kept spacing.lg
   form: {
-    marginBottom: 24,
+    marginBottom: spacing.lg,
   },
   textArea: {
     height: 120,

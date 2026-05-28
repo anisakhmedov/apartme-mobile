@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, Text, Pressable, TextInput as RNTextInput } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -12,17 +13,18 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing } from "@/theme";
+import { colors, spacing, typography, radii } from "@/theme";
 import { PrimaryButton, SecondaryButton } from "@/components/ui";
 import { useAppDispatch } from "@/store";
 import { persistAuth, setUser } from "@/store/authSlice";
 import { users } from "@/data/mockData";
 
 export function OTPVerificationScreen() {
+  const { t } = useTranslation("auth");
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const dispatch = useAppDispatch();
-  const [otp, setOtp] = useState(["", "", "", "", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [countdown, setCountdown] = useState(45);
   const [resendEnabled, setResendEnabled] = useState(false);
   const inputRefs = useRef<RNTextInput[]>([]);
@@ -102,9 +104,9 @@ export function OTPVerificationScreen() {
   return (
     <View style={styles.container}>
       <Animated.View entering={FadeIn.duration(400)} style={styles.header}>
-        <Animated.Text style={styles.title}>Подтвердите номер</Animated.Text>
+        <Animated.Text style={styles.title}>{t("otpConfirmPhoneTitle")}</Animated.Text>
         <Animated.Text style={styles.subtitle}>
-          Мы отправили код на ваш номер
+          {t("otpSentToPhoneSubtitle")}
         </Animated.Text>
       </Animated.View>
 
@@ -138,18 +140,18 @@ export function OTPVerificationScreen() {
       <Animated.View style={[styles.countdownContainer, pulseStyle]}>
         {countdown > 0 ? (
           <Text style={[styles.countdownText, countdown <= 10 && styles.countdownUrgent]}>
-            Повторная отправка через {countdown} сек
+            {t("resendIn", { seconds: countdown })}
           </Text>
         ) : (
           <Pressable onPress={handleResend}>
-            <Text style={styles.resendText}>Отправить код повторно</Text>
+            <Text style={styles.resendText}>{t("resendCode")}</Text>
           </Pressable>
         )}
       </Animated.View>
 
       <Animated.View entering={FadeIn.duration(400).delay(400)} style={styles.buttonContainer}>
         <PrimaryButton
-          label="Подтвердить"
+          label={t("verify")}
           onPress={handleVerify}
           disabled={otp.join("").length !== 6}
         />
@@ -167,13 +169,13 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 40,
-  },
+  }, // Kept colors.textPrimary
   title: {
     fontSize: 28,
     fontWeight: "500",
     color: colors.textPrimary,
     marginBottom: 8,
-  },
+  }, // Kept colors.textSecondary
   subtitle: {
     fontSize: 15,
     fontWeight: "400",
@@ -181,15 +183,15 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   otpContainer: {
-    flexDirection: "row",
+    flexDirection: "row", // Kept 24
     justifyContent: "space-between",
     marginBottom: 24,
     gap: 8,
   },
   otpCell: {
     flex: 1,
-    height: 56,
-    borderRadius: 12,
+    height: 56, // Kept 12
+    borderRadius: 12, // Kept colors.surface
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -197,8 +199,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   otpCellFilled: {
-    borderColor: colors.primary,
-    borderWidth: 2,
+    borderColor: colors.primary, // Kept colors.primary
+    borderWidth: 2, // Kept 2
   },
   countdownContainer: {
     alignItems: "center",
@@ -206,7 +208,7 @@ const styles = StyleSheet.create({
   },
   countdownText: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: colors.textSecondary, // Kept colors.textSecondary
   },
   countdownUrgent: {
     color: colors.error,
@@ -214,8 +216,8 @@ const styles = StyleSheet.create({
   },
   resendText: {
     fontSize: 15,
-    color: colors.primary,
-    fontWeight: "600",
+    color: colors.primary, // Kept colors.primary
+    fontWeight: "600", // Kept 600
     textDecorationLine: "underline",
   },
   buttonContainer: {

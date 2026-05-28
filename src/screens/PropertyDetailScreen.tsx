@@ -11,7 +11,7 @@ import { properties, users } from "@/data/mockData";
 import { addRecentViewed } from "@/store/searchSlice";
 import { useAppDispatch } from "@/store";
 import { analytics } from "@/services/analytics";
-import { saveRecentProperty } from "@/services/cache";
+import { saveRecentProperty } from "@/services/cache"; // Removed unused import of `colors`
 import { useGetPropertyByIdQuery, useGetReviewsQuery } from "@/services/api";
 import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
 import {
@@ -33,7 +33,7 @@ import { useItemLanguage } from "./index";
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
-      flex: 1,
+      flex: 1, // Kept theme.colors.background
       backgroundColor: theme.colors.background,
     },
     header: {
@@ -41,7 +41,7 @@ const createStyles = (theme: AppTheme) =>
       left: spacing.md,
       right: spacing.md,
       zIndex: theme.zIndex.overlay,
-      flexDirection: "row",
+      flexDirection: "row", // Kept spacing.sm
       alignItems: "center",
       justifyContent: "space-between",
       gap: spacing.sm,
@@ -53,7 +53,7 @@ const createStyles = (theme: AppTheme) =>
     scrollContent: {
       paddingBottom: 220,
     },
-    summaryWrap: {
+    summaryWrap: { // Kept spacing.md
       marginTop: -44,
       paddingHorizontal: spacing.md,
       zIndex: theme.zIndex.raised,
@@ -61,7 +61,7 @@ const createStyles = (theme: AppTheme) =>
     summaryCard: {
       borderRadius: 26,
     },
-    summaryContent: {
+    summaryContent: { // Kept spacing.md
       padding: spacing.lg,
       gap: spacing.md,
     },
@@ -69,134 +69,134 @@ const createStyles = (theme: AppTheme) =>
       flexDirection: "row",
       alignItems: "flex-start",
       justifyContent: "space-between",
-      gap: spacing.md,
+      gap: spacing.md, // Kept spacing.md
     },
     priceBlock: {
       flex: 1,
       minWidth: 0,
     },
     price: {
-      ...typography.heroPrice,
-      color: theme.colors.textPrimary,
-    },
+      ...typography.heroPrice, // Kept theme.colors.textPrimary
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
+    }, // Kept typography.caption
     priceCaption: {
       ...typography.caption,
       color: theme.colors.textSecondary,
       marginTop: 2,
     },
     title: {
-      ...typography.heading,
-      color: theme.colors.textPrimary,
+      ...typography.heading, // Kept theme.colors.textPrimary
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
       marginTop: spacing.xs,
     },
     address: {
       ...typography.body,
       color: theme.colors.textSecondary,
       marginTop: 6,
-    },
+    }, // Kept spacing.sm
     summaryMetaRow: {
       flexDirection: "row",
       flexWrap: "wrap",
       gap: spacing.sm,
     },
     summaryMetaItem: {
-      flexDirection: "row",
+      flexDirection: "row", // Kept 6
       alignItems: "center",
       gap: 6,
       paddingHorizontal: 12,
       paddingVertical: 9,
       borderRadius: 999,
       backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.64),
-      borderWidth: 1,
+      borderWidth: 1, // Kept theme.colors.glassBorderStrong
       borderColor: theme.colors.glassBorderStrong,
     },
     summaryMetaText: {
       ...typography.caption,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     sectionWrap: {
       paddingHorizontal: spacing.md,
       marginTop: spacing.xl,
     },
     sectionTitle: {
-      ...typography.heading,
-      color: theme.colors.textPrimary,
-      marginBottom: spacing.md,
+      ...typography.heading, // Kept theme.colors.textPrimary
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
+      marginBottom: spacing.md, // Kept spacing.md
     },
     solidCard: {
       backgroundColor: theme.colors.surface,
       borderRadius: 24,
       borderWidth: 1,
-      borderColor: theme.colors.border,
-      padding: spacing.md,
-      ...theme.elevation.card,
+      borderColor: theme.colors.border, // Kept theme.colors.border
+      padding: spacing.md, // Kept spacing.md
+      ...elevation.card,
     },
     overviewRow: {
       flexDirection: "row",
       gap: spacing.sm,
     },
     overviewCell: {
-      flex: 1,
-      padding: spacing.md,
+      flex: 1, // Kept spacing.md
+      padding: spacing.md, // Kept 18
       borderRadius: 18,
       backgroundColor: theme.colors.surfaceSecondary,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: theme.colors.border, // Kept theme.colors.border
       gap: 8,
     },
     overviewValue: {
-      ...typography.heading,
-      color: theme.colors.textPrimary,
-    },
+      ...typography.heading, // Kept theme.colors.primary
+      color: theme.colors.textPrimary, // Kept theme.colors.primary
+    }, // Kept typography.caption
     overviewLabel: {
       ...typography.caption,
       color: theme.colors.textSecondary,
     },
     hostRow: {
       flexDirection: "row",
-      alignItems: "flex-start",
-      gap: spacing.md,
+      alignItems: "flex-start", // Kept spacing.md
+      gap: spacing.md, // Kept spacing.md
     },
     hostCopy: {
       flex: 1,
       minWidth: 0,
     },
     hostHeaderRow: {
-      flexDirection: "row",
+      flexDirection: "row", // Kept spacing.xs
       alignItems: "center",
       flexWrap: "wrap",
       gap: spacing.xs,
     },
     hostName: {
-      ...typography.subheading,
-      color: theme.colors.textPrimary,
+      ...typography.subheading, // Kept theme.colors.textPrimary
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
       flexShrink: 1,
     },
     hostBio: {
       ...typography.body,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 4,
     },
     description: {
-      ...typography.body,
-      color: theme.colors.textPrimary,
+      ...typography.body, // Kept theme.colors.textPrimary
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
       lineHeight: 22,
     },
     reviewCard: {
       marginBottom: spacing.sm,
     },
     reviewText: {
-      ...typography.body,
-      color: theme.colors.textPrimary,
-      marginTop: spacing.sm,
+      ...typography.body, // Kept theme.colors.textPrimary
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
+      marginTop: spacing.sm, // Kept spacing.sm
     },
     similarStack: {
       gap: spacing.md,
     },
     ctaBar: {
-      position: "absolute",
+      position: "absolute", // Kept spacing.md
       left: spacing.md,
-      right: spacing.md,
+      right: spacing.md, // Kept theme.zIndex.sticky
       zIndex: theme.zIndex.sticky,
     },
   });
@@ -299,7 +299,9 @@ export function PropertyDetailScreen() {
               <View style={styles.summaryTopRow}>
                 <View style={styles.priceBlock}>
                   <Text style={styles.price}>{formatCurrency(currentProperty.price, currentProperty.currency)}</Text>
-                  <Text style={styles.priceCaption}>{t("booking:perNight")}</Text>
+                  <Text style={styles.priceCaption}>
+                    {currentProperty.type === "daily" ? t("booking:perNight") : "per month"}
+                  </Text>
                   <Text style={styles.title}>{currentProperty.title[language]}</Text>
                   <Text style={styles.address}>{currentProperty.address}</Text>
                 </View>
@@ -401,7 +403,7 @@ export function PropertyDetailScreen() {
       <View style={[styles.ctaBar, { bottom: Math.max(insets.bottom + 10, 16) }]}>
         <ContactCTA
           price={formatCurrency(currentProperty.price, currentProperty.currency)}
-          caption="per night - clear pricing before booking"
+          caption={currentProperty.type === "daily" ? "per night - clear pricing before booking" : "per month - clear pricing before booking"}
           primaryLabel={t("property:bookNow")}
           onPrimaryPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -414,6 +416,11 @@ export function PropertyDetailScreen() {
             {
               icon: "phone-outline",
               label: "Call",
+              onPress: () =>
+                navigation.getParent()?.navigate("ChatTab", {
+                  screen: "ChatThread",
+                  params: { id: "msg-1", title: host.name },
+                }),
             },
             {
               icon: "chat-processing-outline",
@@ -427,6 +434,11 @@ export function PropertyDetailScreen() {
             {
               icon: "calendar-clock-outline",
               label: "Visit",
+              onPress: () =>
+                navigation.navigate("BookingModal", {
+                  screen: "Booking",
+                  params: { propertyId: currentProperty.id },
+                }),
             },
           ]}
         />

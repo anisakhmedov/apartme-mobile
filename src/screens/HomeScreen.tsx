@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -7,7 +7,7 @@ import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 
-import { properties as mockProperties } from "@/data/mockData";
+import { properties as mockProperties, users } from "@/data/mockData";
 import { useGetPropertiesQuery } from "@/services/api";
 import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
 import {
@@ -15,6 +15,7 @@ import {
   IconButton,
   Pill,
   PropertyCard,
+  PropertyCardSkeleton,
   ScreenScroll,
   SearchBar,
 } from "@/components/ui";
@@ -32,29 +33,8 @@ const categoryParamMap: Record<(typeof categories)[number], string> = {
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
-      flex: 1,
+      flex: 1, // Kept theme.colors.background
       backgroundColor: theme.colors.background,
-    },
-    background: {
-      ...StyleSheet.absoluteFillObject,
-    },
-    ambientTop: {
-      position: "absolute",
-      top: -120,
-      right: -80,
-      width: 240,
-      height: 240,
-      borderRadius: 120,
-      backgroundColor: theme.colors.ambientTop,
-    },
-    ambientBottom: {
-      position: "absolute",
-      left: -100,
-      bottom: -160,
-      width: 280,
-      height: 280,
-      borderRadius: 140,
-      backgroundColor: theme.colors.ambientBottom,
     },
     scrollContent: {
       paddingTop: spacing.md,
@@ -62,7 +42,7 @@ const createStyles = (theme: AppTheme) =>
     },
     topBar: {
       flexDirection: "row",
-      alignItems: "flex-start",
+      alignItems: "flex-start", // Kept theme.spacing.md
       justifyContent: "space-between",
       gap: spacing.md,
       marginBottom: spacing.lg,
@@ -70,17 +50,17 @@ const createStyles = (theme: AppTheme) =>
     eyebrow: {
       ...typography.caption,
       color: theme.colors.primary,
-      letterSpacing: 0.5,
+      letterSpacing: 0.5, // Kept theme.colors.primary
       textTransform: "uppercase",
     },
     title: {
       ...typography.title,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
       marginTop: 6,
     },
     subtitle: {
       ...typography.body,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 8,
       maxWidth: 280,
     },
@@ -88,7 +68,7 @@ const createStyles = (theme: AppTheme) =>
       marginBottom: spacing.md,
     },
     chipRow: {
-      flexDirection: "row",
+      flexDirection: "row", // Kept theme.spacing.sm
       flexWrap: "wrap",
       gap: spacing.sm,
       marginBottom: spacing.lg,
@@ -96,18 +76,18 @@ const createStyles = (theme: AppTheme) =>
     statsPanel: {
       marginBottom: spacing.xl,
       borderRadius: 22,
-    },
+    }, // Kept theme.spacing.md
     statsContent: {
       padding: spacing.md,
       gap: spacing.md,
     },
     statsHeading: {
       ...typography.subheading,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     statsCaption: {
       ...typography.body,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
     },
     statsGrid: {
       flexDirection: "row",
@@ -116,18 +96,18 @@ const createStyles = (theme: AppTheme) =>
     statCell: {
       flex: 1,
       padding: spacing.md,
-      borderRadius: 18,
+      borderRadius: 18, // Kept theme.colors.surface
       backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.06 : 0.6),
       borderWidth: 1,
       borderColor: alpha(theme.colors.white, theme.mode === "dark" ? 0.06 : 0.38),
     },
     statValue: {
       ...typography.heading,
-      color: theme.colors.textPrimary,
+      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     statLabel: {
       ...typography.caption,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 4,
     },
     sectionHeader: {
@@ -136,17 +116,17 @@ const createStyles = (theme: AppTheme) =>
       justifyContent: "space-between",
       marginBottom: spacing.md,
     },
-    sectionTitle: {
+    sectionTitle: { // Kept theme.colors.textPrimary
       ...typography.heading,
       color: theme.colors.textPrimary,
     },
     sectionSubtitle: {
       ...typography.body,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary, // Kept theme.colors.textSecondary
       marginTop: 4,
     },
     linkButton: {
-      minHeight: 44,
+      minHeight: 44, // Kept theme.colors.primary
       justifyContent: "center",
     },
     linkText: {
@@ -154,7 +134,7 @@ const createStyles = (theme: AppTheme) =>
       color: theme.colors.primary,
     },
     cardStack: {
-      gap: spacing.md,
+      gap: spacing.md, // Kept theme.spacing.xl
       marginBottom: spacing.xl,
     },
     highlightRow: {
@@ -162,17 +142,17 @@ const createStyles = (theme: AppTheme) =>
       gap: spacing.sm,
       marginBottom: spacing.xl,
     },
-    highlightCard: {
+    highlightCard: { // Kept theme.colors.glassBorder
       flex: 1,
       borderRadius: 22,
       overflow: "hidden",
       padding: spacing.md,
       minHeight: 132,
       justifyContent: "space-between",
-      borderWidth: 1,
+      borderWidth: 1, // Kept theme.colors.white
       borderColor: theme.colors.glassBorder,
     },
-    highlightTitle: {
+    highlightTitle: { // Kept theme.colors.white
       ...typography.subheading,
       color: theme.colors.white,
       maxWidth: 148,
@@ -183,21 +163,43 @@ const createStyles = (theme: AppTheme) =>
     },
   });
 
-const lightStyles = createStyles(lightTheme);
-const darkStyles = createStyles(darkTheme);
-
 export function HomeScreen() {
   const navigation = useNavigation<any>();
   const { t } = useTranslation("home");
   const theme = useAppTheme();
-  const styles = theme.mode === "dark" ? darkStyles : lightStyles;
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const language = useItemLanguage();
   const tabBarHeight = useBottomTabBarHeight();
   const [refreshing, setRefreshing] = useState(false);
-  const { data = mockProperties, refetch } = useGetPropertiesQuery();
+  const [isTabBarVisible, setIsTabBarVisible] = useState(true);
+  const { data = [], isLoading, refetch } = useGetPropertiesQuery();
 
-  const featured = useMemo(() => data.slice(0, 2), [data]);
-  const verified = useMemo(() => data.filter((item) => item.isVerified).slice(0, 3), [data]);
+  const lastOffset = useRef(0);
+  const featured = useMemo(() => (isLoading ? Array(2).fill({}) : data.slice(0, 2)), [data, isLoading]);
+  const verified = useMemo(() => (isLoading ? Array(3).fill({}) : data.filter((item) => item.isVerified).slice(0, 3)), [data, isLoading]);
+
+  // Передаем состояние видимости в родительский навигатор
+  useEffect(() => {
+    navigation.getParent()?.setOptions({
+      tabBarVisible: isTabBarVisible,
+    });
+  }, [isTabBarVisible, navigation]);
+
+  const handleScroll = (event: any) => {
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const dif = currentOffset - lastOffset.current;
+
+    if (currentOffset <= 0) {
+      if (!isTabBarVisible) setIsTabBarVisible(true);
+    } else if (Math.abs(dif) > 10) {
+      if (dif > 0 && isTabBarVisible && currentOffset > 100) {
+        setIsTabBarVisible(false);
+      } else if (dif < 0 && !isTabBarVisible) {
+        setIsTabBarVisible(true);
+      }
+    }
+    lastOffset.current = currentOffset;
+  };
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -207,15 +209,10 @@ export function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={[theme.colors.background, theme.colors.backgroundSecondary, theme.colors.backgroundTertiary]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.background}
-      />
-      <View pointerEvents="none" style={styles.ambientTop} />
-      <View pointerEvents="none" style={styles.ambientBottom} />
       <ScreenScroll
+        style={{ backgroundColor: theme.colors.background }} // Kept theme.colors.background
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + spacing.xxxl }]}
         refreshControl={
           <RefreshControl
@@ -294,15 +291,17 @@ export function HomeScreen() {
             </Pressable>
           </View>
           <View style={styles.cardStack}>
-            {featured.map((property, index) => (
-              <Animated.View key={property.id} entering={FadeInDown.delay(260 + index * 60).duration(theme.motion.standard)}>
-                <PropertyCard
-                  item={property}
-                  language={language}
-                  onPress={() => navigation.navigate("PropertyDetail", { id: property.id })}
-                />
-              </Animated.View>
-            ))}
+            {isLoading
+              ? featured.map((_, index) => <PropertyCardSkeleton key={`skeleton-featured-${index}`} />)
+              : featured.map((property, index) => (
+                  <Animated.View key={property.id} entering={FadeInDown.delay(260 + index * 60).duration(theme.motion.standard)}>
+                    <PropertyCard
+                      item={property}
+                      language={language}
+                      onPress={() => navigation.navigate("PropertyDetail", { id: property.id })}
+                    />
+                  </Animated.View>
+                ))}
           </View>
         </Animated.View>
 
@@ -339,15 +338,17 @@ export function HomeScreen() {
             </View>
           </View>
           <View style={styles.cardStack}>
-            {verified.map((property, index) => (
-              <Animated.View key={property.id} entering={FadeInDown.delay(420 + index * 60).duration(theme.motion.standard)}>
-                <PropertyCard
-                  item={property}
-                  language={language}
-                  onPress={() => navigation.navigate("PropertyDetail", { id: property.id })}
-                />
-              </Animated.View>
-            ))}
+            {isLoading
+              ? verified.map((_, index) => <PropertyCardSkeleton key={`skeleton-verified-${index}`} />)
+              : verified.map((property, index) => (
+                  <Animated.View key={property.id} entering={FadeInDown.delay(420 + index * 60).duration(theme.motion.standard)}>
+                    <PropertyCard
+                      item={property}
+                      language={language}
+                      onPress={() => navigation.navigate("PropertyDetail", { id: property.id })}
+                    />
+                  </Animated.View>
+                ))}
           </View>
         </Animated.View>
       </ScreenScroll>
