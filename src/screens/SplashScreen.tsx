@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 
 import { AppScreen, PrimaryButton, SecondaryButton } from "@/components/ui";
-import { colors, radii, spacing, typography, AppTheme, useAppTheme } from "@/theme";
+import { Palette as colors, radii, spacing, typography, AppTheme, useAppTheme } from "@/theme";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setLanguage } from "@/store/preferencesSlice";
 import i18n from "@/i18n";

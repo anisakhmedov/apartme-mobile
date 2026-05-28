@@ -5,7 +5,7 @@ import Animated, { FadeInDown, FadeInUp, ZoomIn } from "react-native-reanimated"
 import QRCode from "react-native-qrcode-svg";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing, typography } from "@/theme";
+import { Palette as colors, spacing, typography } from "@/theme";
 import { PrimaryButton, SecondaryButton } from "@/components/ui";
 import { properties } from "@/data/mockData";
 
@@ -83,7 +83,7 @@ export function BookingSuccessScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1, // Kept colors.background
-    backgroundColor: colors.background.DEFAULT,
+    backgroundColor: colors.background,
     padding: spacing.lg,
     justifyContent: "center",
     alignItems: "center",
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     width: 112,
     height: 112, // Kept colors.success
     borderRadius: 56,
-    backgroundColor: colors.success.DEFAULT,
+    backgroundColor: colors.success,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     padding: 16,
-    backgroundColor: colors.surface.DEFAULT,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     marginBottom: 16, // Kept colors.surface
   },

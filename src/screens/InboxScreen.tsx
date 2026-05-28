@@ -1,4 +1,3 @@
-import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -8,9 +7,16 @@ import { LinearGradient } from "expo-linear-gradient";
 import { messages as mockMessages, users } from "@/data/mockData";
 import { AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
 import { ConversationRow, EmptyState, GlassContainer, ScreenScroll } from "@/components/ui"; // Removed unused import of `colors`
-import { formatTime } from "./index";
 
-const createStyles = (theme: AppTheme) =>
+const formatTime = (value: string | number | Date) =>
+  new Intl.DateTimeFormat("ru-RU", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+
+type ScreenTheme = typeof lightTheme | typeof darkTheme;
+
+const createStyles = (theme: ScreenTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -26,7 +32,7 @@ const createStyles = (theme: AppTheme) =>
       width: 220,
       height: 220,
       borderRadius: 110,
-      backgroundColor: theme.colors.ambientTop,
+      backgroundColor: theme.colors.primaryLight,
     },
     ambientBottom: {
       position: "absolute",
@@ -35,7 +41,7 @@ const createStyles = (theme: AppTheme) =>
       width: 260,
       height: 260,
       borderRadius: 130,
-      backgroundColor: theme.colors.ambientBottom,
+      backgroundColor: theme.colors.accentLight,
     },
     scrollContent: {
       paddingTop: spacing.md,
@@ -45,7 +51,7 @@ const createStyles = (theme: AppTheme) =>
       marginBottom: spacing.lg, // Kept typography.title
     },
     title: {
-      ...typography.title,
+      ...typography.heading,
       color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     subtitle: {
@@ -62,7 +68,7 @@ const createStyles = (theme: AppTheme) =>
       gap: spacing.sm,
     },
     hintTitle: {
-      ...typography.subheading,
+      ...typography.heading,
       color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     hintBody: {
@@ -95,12 +101,12 @@ export function InboxScreen() {
       <View pointerEvents="none" style={styles.ambientBottom} />
 
       <ScreenScroll contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + spacing.xxxl }]}>
-        <Animated.View entering={FadeInUp.duration(theme.motion.standard)} style={styles.header}>
+        <Animated.View entering={FadeInUp.duration(Number(theme.motion.duration.normal))} style={styles.header}>
           <Text style={styles.title}>Сообщения</Text>
           <Text style={styles.subtitle}>Диалоги с хозяевами и гостями в спокойном, прозрачном интерфейсе.</Text>
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(60).duration(theme.motion.standard)}>
+        <Animated.View entering={FadeInDown.delay(60).duration(Number(theme.motion.duration.normal))}>
           <GlassContainer variant="accent" style={styles.hintPanel}>
             <View style={styles.hintContent}>
               <Text style={styles.hintTitle}>Быстрый путь к бронированию</Text>
@@ -112,21 +118,21 @@ export function InboxScreen() {
         </Animated.View>
 
         {mockMessages.length ? (
-          <View style={styles.list}>
-            {mockMessages.map((message, index) => (
-              <Animated.View key={message.id} entering={FadeInDown.delay(100 + index * 40).duration(theme.motion.standard)}>
-                <ConversationRow
-                  title="Azizbek Karimov"
-                  preview={message.text}
-                  time={formatTime(message.createdAt)}
-                  unread={1}
-                  avatar={users[0].avatar}
-                  onPress={() => navigation.navigate("ChatThread", { id: message.id, title: "Azizbek Karimov" })}
-                />
-              </Animated.View>
-            ))}
-          </View>
-        ) : (
+                  <View style={styles.list}>
+                    {mockMessages.map((message, index) => (
+                      <Animated.View key={message.id} entering={FadeInDown.delay(100 + index * 40).duration(Number(theme.motion.duration.normal))}>
+                        <ConversationRow
+                          title="Azizbek Karimov"
+                          preview={message.text}
+                          time={formatTime(message.createdAt)}
+                          unread={1}
+                          avatar={users[0].avatar}
+                          onPress={() => navigation.navigate("ChatThread", { id: message.id, title: "Azizbek Karimov" })}
+                        />
+                      </Animated.View>
+                    ))}
+                  </View>
+                ) : (
           <EmptyState title="Пока нет сообщений" description="Начните общение с хозяином по понравившемуся объекту." />
         )}
       </ScreenScroll>

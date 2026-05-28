@@ -24,7 +24,7 @@ import {
 } from '@/components/ui';
 import MapView, { Marker, PROVIDER_GOOGLE } from '@/components/map';
 import { Property } from '@/types/models';
-import { useItemLanguage } from './index';
+import { useItemLanguage } from './index.tsx';
 
 type ViewMode = 'list' | 'map';
 type PriceSort = 'none' | 'asc' | 'desc';

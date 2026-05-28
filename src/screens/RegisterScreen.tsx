@@ -170,8 +170,8 @@ export function RegisterScreen() {
             <View style={styles.documentsBox}>
               <Text style={styles.sectionTitle}>{t("documents")}</Text>
               <CheckRow theme={theme} styles={styles} label={t("passportUploaded")} checked readyLabel={t("ready")} requiredLabel={t("required")} />
-              <CheckRow label={t("selfieWithPassport")} checked={false} readyLabel={t("ready")} requiredLabel={t("required")} />
-              <CheckRow label={t("proofOfAddress")} checked={false} readyLabel={t("ready")} requiredLabel={t("required")} />
+              <CheckRow theme={theme} styles={styles} label={t("selfieWithPassport")} checked={false} readyLabel={t("ready")} requiredLabel={t("required")} />
+              <CheckRow theme={theme} styles={styles} label={t("proofOfAddress")} checked={false} readyLabel={t("ready")} requiredLabel={t("required")} />
             </View>
 
             {error ? (

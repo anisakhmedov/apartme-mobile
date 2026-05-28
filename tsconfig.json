@@ -9,6 +9,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
     "jsx": "react-jsx"
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.json"],

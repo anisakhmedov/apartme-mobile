@@ -5,7 +5,7 @@ import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 
 import { Card, PrimaryButton, SecondaryButton, ScreenScroll, Section, TextField } from "@/components/ui";
-import { colors, radii, spacing, typography } from "@/theme";
+import { Palette as colors, radii, spacing, typography } from "@/theme";
 
 type DocumentState = {
   passport: boolean;

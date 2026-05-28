@@ -5,14 +5,15 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { properties as mockProperties } from "@/data/mockData";
-import { useGetPropertiesQuery } from "@/services/api"; // Removed unused import of `colors`
-import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
-import { GlassContainer, IconButton, formatCurrency } from "@/components/ui";
-import MapView, { Marker, PROVIDER_GOOGLE } from "@/components/map";
-import { useItemLanguage } from "./index";
+import { properties as mockProperties } from "../data/mockData";
+import { useGetPropertiesQuery } from "../services/api";
+import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "../theme";
+import { GlassContainer, IconButton, formatCurrency } from "../components/ui";
+import MapView, { Marker, PROVIDER_GOOGLE } from "../components/map";
+import { useAppSelector } from "../store";
+import { LocalizedText } from "../types/models";
 
-const createStyles = (theme: AppTheme) =>
+const createStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1, // Kept theme.colors.background
@@ -38,7 +39,7 @@ const createStyles = (theme: AppTheme) =>
       minWidth: 0,
     }, // Kept typography.subheading
     headerTitle: {
-      ...typography.subheading,
+      ...typography.h3,
       color: theme.colors.textPrimary,
     },
     headerSubtitle: {
@@ -56,7 +57,7 @@ const createStyles = (theme: AppTheme) =>
       borderWidth: 1,
       borderColor: alpha(theme.colors.white, 0.82),
       backgroundColor: theme.colors.surface,
-      ...theme.elevation.soft,
+      ...theme.elevation.card,
     },
     markerActive: {
       backgroundColor: theme.colors.primary, // Kept theme.colors.primary
@@ -92,8 +93,8 @@ const createStyles = (theme: AppTheme) =>
       letterSpacing: 0.5, // Kept theme.colors.textSecondary
     },
     listingTitle: {
-      ...typography.subheading,
-      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
+      ...typography.h3,
+      color: theme.colors.textPrimary,
       marginTop: 6,
     },
     listingAddress: {
@@ -115,7 +116,7 @@ const createStyles = (theme: AppTheme) =>
       borderRadius: 16,
       borderWidth: 1,
       borderColor: theme.colors.border, // Kept theme.colors.border
-      backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.62),
+      backgroundColor: alpha(theme.colors.surface, (theme.mode === "dark") ? 0.08 : 0.62),
       alignItems: "center",
       justifyContent: "center",
     },
@@ -124,8 +125,8 @@ const createStyles = (theme: AppTheme) =>
       borderColor: theme.colors.primary, // Kept theme.colors.primary
     },
     actionText: {
-      ...typography.bodyStrong,
-      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
+      ...typography.body,
+      color: theme.colors.textPrimary,
     },
     actionTextPrimary: {
       color: theme.colors.white,
@@ -137,7 +138,7 @@ const darkStyles = createStyles(darkTheme);
 
 export function MapScreen() {
   const navigation = useNavigation<any>();
-  const language = useItemLanguage();
+  const language = useAppSelector((state: any) => state.preferences.language) as keyof LocalizedText;
   const theme = useAppTheme();
   const styles = theme.mode === "dark" ? darkStyles : lightStyles;
   const insets = useSafeAreaInsets();
@@ -149,9 +150,11 @@ export function MapScreen() {
     [data, selectedPropertyId]
   );
 
+  const defaultMotion = parseInt((theme.motion?.duration?.normal as string) ?? "200", 10);
+
   return (
     <View style={styles.container}>
-      <Animated.View entering={FadeIn.duration(theme.motion.standard)} style={StyleSheet.absoluteFillObject}>
+      <Animated.View entering={FadeIn.duration(defaultMotion)} style={StyleSheet.absoluteFillObject}>
         <MapView
           provider={PROVIDER_GOOGLE}
           style={styles.map}
@@ -182,24 +185,24 @@ export function MapScreen() {
       </Animated.View>
 
       <Animated.View
-        entering={FadeInDown.duration(theme.motion.standard)}
+        entering={FadeInDown.duration(defaultMotion)}
         style={[styles.header, { top: Math.max(insets.top + 8, 20) }]}
       >
         <GlassContainer variant="navbar">
           <View style={styles.headerContent}>
-            <IconButton icon="arrow-back-ios-new" label="Back" onPress={() => navigation.goBack()} />
+            <IconButton icon={"arrow-back-ios-new" as any} label="Back" onPress={() => navigation.goBack()} />
             <View style={styles.headerCopy}>
               <Text style={styles.headerTitle}>Map view</Text>
               <Text style={styles.headerSubtitle}>{data.length} visible listings in Samarkand</Text>
             </View>
-            <IconButton icon="tune" label="Filters" onPress={() => navigation.goBack()} />
+            <IconButton icon={"tune" as any} label="Filters" onPress={() => navigation.goBack()} />
           </View>
         </GlassContainer>
       </Animated.View>
 
       {selectedProperty ? (
         <Animated.View
-          entering={FadeInDown.delay(100).duration(theme.motion.standard)}
+          entering={FadeInDown.delay(100).duration(defaultMotion)}
           style={[styles.listingPanel, { bottom: Math.max(insets.bottom + 16, 24) }]}
         >
           <GlassContainer variant="panel">

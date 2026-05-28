@@ -13,7 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing, typography, radii } from "@/theme";
+import { Palette as colors, spacing, typography, radii } from "@/theme";
 import { PrimaryButton, SecondaryButton } from "@/components/ui";
 import { useAppDispatch } from "@/store";
 import { persistAuth, setUser } from "@/store/authSlice";

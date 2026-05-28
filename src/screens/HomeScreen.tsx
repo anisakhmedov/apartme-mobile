@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 
 import { properties as mockProperties, users } from "@/data/mockData";
 import { useGetPropertiesQuery } from "@/services/api";
-import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
+import { alpha, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
 import {
   GlassContainer,
   IconButton,
@@ -19,7 +19,6 @@ import {
   ScreenScroll,
   SearchBar,
 } from "@/components/ui";
-import { useItemLanguage } from "./index";
 
 const categories = ["apartments", "houses", "rooms", "guesthouses", "daily"] as const;
 const categoryParamMap: Record<(typeof categories)[number], string> = {
@@ -30,7 +29,7 @@ const categoryParamMap: Record<(typeof categories)[number], string> = {
   daily: "daily",
 };
 
-const createStyles = (theme: AppTheme) =>
+const createStyles = (theme: ReturnType<typeof useAppTheme>) =>
   StyleSheet.create({
     container: {
       flex: 1, // Kept theme.colors.background
@@ -54,7 +53,7 @@ const createStyles = (theme: AppTheme) =>
       textTransform: "uppercase",
     },
     title: {
-      ...typography.title,
+      ...typography.heading,
       color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
       marginTop: 6,
     },
@@ -82,7 +81,7 @@ const createStyles = (theme: AppTheme) =>
       gap: spacing.md,
     },
     statsHeading: {
-      ...typography.subheading,
+      ...typography.heading,
       color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
     },
     statsCaption: {
@@ -97,9 +96,9 @@ const createStyles = (theme: AppTheme) =>
       flex: 1,
       padding: spacing.md,
       borderRadius: 18, // Kept theme.colors.surface
-      backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.06 : 0.6),
+      backgroundColor: alpha(theme.colors.surface, 0.6),
       borderWidth: 1,
-      borderColor: alpha(theme.colors.white, theme.mode === "dark" ? 0.06 : 0.38),
+      borderColor: alpha(theme.colors.white, 0.38),
     },
     statValue: {
       ...typography.heading,
@@ -130,7 +129,8 @@ const createStyles = (theme: AppTheme) =>
       justifyContent: "center",
     },
     linkText: {
-      ...typography.bodyStrong,
+      ...typography.body,
+      fontWeight: "600",
       color: theme.colors.primary,
     },
     cardStack: {
@@ -150,10 +150,10 @@ const createStyles = (theme: AppTheme) =>
       minHeight: 132,
       justifyContent: "space-between",
       borderWidth: 1, // Kept theme.colors.white
-      borderColor: theme.colors.glassBorder,
+      borderColor: alpha(theme.colors.white, 0.38),
     },
     highlightTitle: { // Kept theme.colors.white
-      ...typography.subheading,
+      ...typography.heading,
       color: theme.colors.white,
       maxWidth: 148,
     },
@@ -165,10 +165,11 @@ const createStyles = (theme: AppTheme) =>
 
 export function HomeScreen() {
   const navigation = useNavigation<any>();
-  const { t } = useTranslation("home");
+  const { t, i18n } = useTranslation("home");
   const theme = useAppTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const language = useItemLanguage();
+  const motionDuration = theme.motion.duration.normal;
+  const language = i18n.language;
   const tabBarHeight = useBottomTabBarHeight();
   const [refreshing, setRefreshing] = useState(false);
   const [isTabBarVisible, setIsTabBarVisible] = useState(true);
@@ -223,7 +224,7 @@ export function HomeScreen() {
           />
         }
       >
-        <Animated.View entering={FadeInUp.duration(theme.motion.standard)} style={styles.topBar}>
+        <Animated.View entering={FadeInUp.duration(400)} style={styles.topBar}>
           <View style={{ flex: 1 }}>
             <Text style={styles.eyebrow}>SamarkandRent</Text>
             <Text style={styles.title}>{t("welcome")}</Text>
@@ -232,18 +233,18 @@ export function HomeScreen() {
             </Text>
           </View>
           <IconButton
-            icon="notifications-none"
+            icon="bell-outline"
             label={t("notifications")}
             badge={3}
             onPress={() => navigation.getParent()?.navigate("ProfileTab", { screen: "Notifications" })}
           />
         </Animated.View>
 
-        <Animated.View entering={FadeInUp.delay(80).duration(theme.motion.standard)} style={styles.searchWrap}>
+        <Animated.View entering={FadeInUp.delay(80).duration(400)} style={styles.searchWrap}>
           <SearchBar placeholder={t("searchPlaceholder")} onPress={() => navigation.getParent()?.navigate("SearchTab")} />
         </Animated.View>
 
-        <Animated.View entering={FadeInUp.delay(120).duration(theme.motion.standard)} style={styles.chipRow}>
+        <Animated.View entering={FadeInUp.delay(120).duration(400)} style={styles.chipRow}>
           {categories.map((category) => (
             <Pill
               key={category}
@@ -253,7 +254,7 @@ export function HomeScreen() {
           ))}
         </Animated.View>
 
-        <Animated.View entering={FadeInUp.delay(160).duration(theme.motion.standard)}>
+        <Animated.View entering={FadeInUp.delay(160).duration(400)}>
           <GlassContainer variant="accent" style={styles.statsPanel}>
             <View style={styles.statsContent}>
               <View>
@@ -280,7 +281,7 @@ export function HomeScreen() {
           </GlassContainer>
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(220).duration(theme.motion.standard)}>
+        <Animated.View entering={FadeInDown.delay(220).duration(400)}>
           <View style={styles.sectionHeader}>
             <View>
               <Text style={styles.sectionTitle}>{t("featuredListings")}</Text>
@@ -294,7 +295,7 @@ export function HomeScreen() {
             {isLoading
               ? featured.map((_, index) => <PropertyCardSkeleton key={`skeleton-featured-${index}`} />)
               : featured.map((property, index) => (
-                  <Animated.View key={property.id} entering={FadeInDown.delay(260 + index * 60).duration(theme.motion.standard)}>
+                  <Animated.View key={property.id} entering={FadeInDown.delay(260 + index * 60).duration(400)}>
                     <PropertyCard
                       item={property}
                       language={language}
@@ -305,7 +306,7 @@ export function HomeScreen() {
           </View>
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(320).duration(theme.motion.standard)}>
+        <Animated.View entering={FadeInDown.delay(320).duration(400)}>
           <View style={styles.sectionHeader}>
             <View>
               <Text style={styles.sectionTitle}>{t("popularInSamarkand")}</Text>
@@ -330,7 +331,7 @@ export function HomeScreen() {
           </View>
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(380).duration(theme.motion.standard)}>
+        <Animated.View entering={FadeInDown.delay(380).duration(400)}>
           <View style={styles.sectionHeader}>
             <View>
               <Text style={styles.sectionTitle}>{t("nearbyListings")}</Text>
@@ -341,7 +342,7 @@ export function HomeScreen() {
             {isLoading
               ? verified.map((_, index) => <PropertyCardSkeleton key={`skeleton-verified-${index}`} />)
               : verified.map((property, index) => (
-                  <Animated.View key={property.id} entering={FadeInDown.delay(420 + index * 60).duration(theme.motion.standard)}>
+                  <Animated.View key={property.id} entering={FadeInDown.delay(420 + index * 60).duration(400)}>
                     <PropertyCard
                       item={property}
                       language={language}

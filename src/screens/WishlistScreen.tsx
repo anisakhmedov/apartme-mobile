@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { properties } from "@/data/mockData";
 import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme, elevation } from "@/theme";
 import { EmptyState, GlassContainer, PropertyCard, ScreenScroll } from "@/components/ui";
-import { useItemLanguage } from "./index";
+import { useItemLanguage } from "./index.tsx";
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({

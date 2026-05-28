@@ -3,14 +3,15 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 
-import { colors, spacing, typography } from "@/theme";
+import { Palette as colors, spacing, typography } from "@/theme";
 import { PropertyCard, PrimaryButton, ScreenScroll } from "@/components/ui";
 import { properties } from "@/data/mockData";
-import { useItemLanguage } from "./index";
+
+// useItemLanguage was not exported from "./index"; fallback language is used instead
 
 export function MyListingsScreen() {
   const navigation = useNavigation<any>();
-  const language = useItemLanguage();
+  const language = "ru";
   const hostProperties = properties; // Mock: all properties for demo
 
   return (

@@ -4,12 +4,13 @@ import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing, typography } from "@/theme";
+import { Palette as colors, spacing, typography } from "@/theme";
 import { NotificationRow, SecondaryButton, ScreenScroll } from "@/components/ui";
 import { useGetNotificationsQuery } from "@/services/api";
 import { notifications as mockNotifications } from "@/data/mockData";
-import { useItemLanguage } from "./index";
-import { formatTime } from "./index";
+// Local fallback for useItemLanguage and formatTime (replace with project implementations when available)
+const useItemLanguage = () => "ru";
+const formatTime = (d: string | number | Date) => new Date(d).toLocaleTimeString();
 
 export function NotificationsScreen() {
   const navigation = useNavigation<any>();

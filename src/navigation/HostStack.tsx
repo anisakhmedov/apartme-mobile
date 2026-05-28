@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { AddEditListingScreen, BookingRequestsScreen, HostDashboardScreen, MyListingsScreen } from "@/screens";
+import { AddEditListingScreen, BookingRequestsScreen, HostDashboardScreen, MyListingsScreen } from "../screens/index.tsx";
 
 const Stack = createNativeStackNavigator();
 

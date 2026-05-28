@@ -4,11 +4,13 @@ import { useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 
-import { AppScreen, PrimaryButton, SecondaryButton, TextField } from "@/components/ui";
-import { colors, spacing, typography, radii } from "@/theme";
-import { useAppDispatch } from "@/store";
-import { persistAuth, setUser } from "@/store/authSlice";
-import { users } from "@/data/mockData";
+import { AppScreen, PrimaryButton, SecondaryButton, TextField } from "../components/ui";
+import { Palette as rawColors, spacing, typography, radii } from "../theme";
+import { useAppDispatch } from "../store";
+import { persistAuth, setUser } from "../store/authSlice";
+import { users } from "../data/mockData";
+
+const colors: any = rawColors;
 
 export function LoginScreen() {
   const { t } = useTranslation("auth");
@@ -73,3 +75,65 @@ export function LoginScreen() {
     </AppScreen>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: spacing.md,
+    justifyContent: "center",
+    backgroundColor: colors.background.DEFAULT,
+  },
+  header: {
+    marginBottom: spacing.lg,
+    alignItems: "center",
+  },
+  logoText: {
+    ...typography.heading,
+    color: colors.primary.DEFAULT,
+    marginBottom: spacing.xs,
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.textSecondary,
+  },
+  form: {
+    width: "100%",
+  },
+  toggleLink: {
+    position: "absolute",
+    right: spacing.sm,
+    top: spacing.sm,
+    padding: spacing.xs,
+  },
+  toggleLinkText: {
+    ...typography.label,
+    color: colors.primary.DEFAULT,
+  },
+  errorText: {
+    color: colors.error,
+    marginTop: spacing.sm,
+  },
+  forgotLink: {
+    alignSelf: "flex-end",
+    marginTop: spacing.sm,
+  },
+  forgotText: {
+    ...typography.body,
+    color: colors.primary.DEFAULT,
+    fontWeight: "600",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: spacing.md,
+  },
+  footerText: {
+    ...typography.body,
+    color: colors.textSecondary,
+  },
+  registerLink: {
+    ...typography.body,
+    color: colors.primary.DEFAULT,
+    fontWeight: "600",
+  },
+});

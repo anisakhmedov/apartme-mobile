@@ -6,7 +6,7 @@ import { LoginScreen } from "@/screens/LoginScreen";
 import { RegisterScreen } from "@/screens/RegisterScreen";
 import { OTPVerificationScreen } from "@/screens/OTPVerificationScreen";
 import { ForgotPasswordScreen } from "@/screens/ForgotPasswordScreen";
-import { colors } from "@/theme";
+import { Palette as colors } from "@/theme";
 
 const Stack = createNativeStackNavigator();
 

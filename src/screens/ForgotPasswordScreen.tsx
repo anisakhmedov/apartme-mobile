@@ -5,7 +5,7 @@ import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 
 import { AppScreen, PrimaryButton, ScreenScroll, TextField } from "@/components/ui";
-import { colors, radii, spacing, typography } from "@/theme";
+import { Palette as colors, radii, spacing, typography } from "@/theme";
 // The imports from "@/theme are already correct and specific.
 export function ForgotPasswordScreen() {
   const { t } = useTranslation("auth");
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   title: {
-    ...typography.title,
+    ...typography.heading,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   },
   successContainer: {
     backgroundColor: colors.surface,
-    borderRadius: radii.modal,
+    borderRadius: radii.lg,
     padding: spacing.lg,
     gap: spacing.md,
   },

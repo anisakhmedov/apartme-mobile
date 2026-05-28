@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing, typography } from "@/theme";
+import { Palette as colors, spacing, typography } from "@/theme";
 import { StatCard, Section, PrimaryButton, Card, ScreenScroll, BookingCard } from "@/components/ui";
 import { formatCurrency } from "@/components/ui";
 

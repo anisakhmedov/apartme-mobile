@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing, typography } from "@/theme";
+import { Palette as colors, spacing, typography } from "@/theme";
 import { RatingStars, PrimaryButton, TextField, ScreenScroll } from "@/components/ui";
 
 export function WriteReviewScreen() {

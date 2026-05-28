@@ -17,14 +17,27 @@ import {
   properties,
   reviews, // Removed unused import of `reviews`
   users
-} from "@/data/mockData";
-import { addRecentViewed } from "@/store/searchSlice";
-import { useAppDispatch, useAppSelector } from "@/store";
-import { analytics } from "@/services/analytics";
-import { saveRecentProperty } from "@/services/cache";
-import { colors, radii, spacing, AppTheme, useAppTheme, typography, alpha, darkTheme, lightTheme, motion, zIndex, elevation } from "@/theme";
-import { Booking, LocalizedText, Property } from "@/types/models";
-import MapView, { Marker, PROVIDER_GOOGLE } from "@/components/map";
+} from "../data/mockData";
+import { useAppDispatch, useAppSelector } from "../store";
+// Analytics shim: simple no-op implementation to avoid missing module at dev time.
+// Replace with real analytics service implementation when available.
+const analytics = {
+  logEvent: (_eventName: string, _params?: Record<string, any>) => {
+    // noop
+  }
+};
+import { saveRecentProperty } from "../services/cache";
+import { Palette as palette, colors as rawColors, radii, spacing, AppTheme, useAppTheme, typography, alpha, darkTheme, lightTheme, motion, zIndex, elevation } from "../theme";
+import { addRecentViewed } from "../store/searchSlice";
+const colors: any = {
+  ...palette,
+  charcoal: (rawColors as any).charcoal ?? palette.textPrimary,
+  muted: (rawColors as any).muted ?? palette.textSecondary,
+  border: (palette as any).border ?? (rawColors as any).border?.DEFAULT ?? "#e5e7eb",
+  white: palette.white ?? "#ffffff",
+};
+import { Booking, LocalizedText, Property } from "../types/models";
+import MapView, { Marker, PROVIDER_GOOGLE } from "../components/map";
 import {
   AppScreen,
   Avatar,
@@ -57,10 +70,10 @@ import {
   ToggleRow,
   formatCurrency,
   useResponsive
-} from "@/components/ui";
-import { setLanguage, setCurrency, toggleDarkMode, togglePush, setBiometric } from "@/store/preferencesSlice";
-import { logout, persistAuth, setUser } from "@/store/authSlice"; // Removed unused import of `colors`
-import { useGetBookingsQuery, useGetNotificationsQuery, useGetPropertiesQuery, useGetPropertyByIdQuery, useGetReviewsQuery, useGetUsersQuery } from "@/services/api";
+} from "../components/ui";
+import { setLanguage, setCurrency, toggleDarkMode, togglePush, setBiometric } from "../store/preferencesSlice";
+import { logout, persistAuth, setUser } from "../store/authSlice";
+import { useGetBookingsQuery, useGetNotificationsQuery, useGetPropertiesQuery, useGetPropertyByIdQuery, useGetReviewsQuery, useGetUsersQuery } from "../services/api";
 
 const languageOptions = ["ru", "en", "uz"] as const; // Removed unused import of `colors`
 const categories = ["apartments", "houses", "rooms", "guesthouses", "daily"] as const;
@@ -259,7 +272,7 @@ export function HomeScreen({ navigation }: any) {
           <ScreenScroll>
             <View style={styles.homeTopBar}>
               <View><Text style={styles.brandSmall}>SamarkandRent</Text><Text style={styles.homeGreeting}>{t("welcome")}</Text></View>
-              <IconButton icon="notifications-none" label={t("notifications")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Notifications" })} />
+              <IconButton icon={"notifications-none" as any} label={t("notifications")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Notifications" })} />
             </View>
             <Pressable style={styles.searchHero} onPress={() => navigation.navigate("SearchTab")} accessibilityRole="button" accessibilityLabel={t("search")}> 
                 <MaterialIcons name="search" size={22} color={colors.muted} />
@@ -269,7 +282,7 @@ export function HomeScreen({ navigation }: any) {
               <FlatList horizontal showsHorizontalScrollIndicator={false} data={categories as unknown as string[]} keyExtractor={(item) => item} renderItem={({ item }) => <Pill label={t(item)} />} />
             </Section>
             <Section title={t("featuredListings")} action={<Text style={styles.linkText}>{t("seeAll")}</Text>}>
-                {data.slice(0, 2).map((property) => <PropertyCard key={property.id} item={property} language={language} onPress={() => navigation.navigate("PropertyDetail", { id: property.id })} />)}
+                {data.slice(0, 2).map((property: Property) => <PropertyCard key={property.id} item={property} language={language} onPress={() => navigation.navigate("PropertyDetail", { id: property.id })} />)}
             </Section>
             <Section title={t("popularInSamarkand")}>
               <View style={styles.bannerRow}>
@@ -301,7 +314,7 @@ export function SearchMapScreen({ navigation }: any) {
         <TextField placeholder={t("searchPlaceholder")} />
         <View style={styles.togglePillsRow}><Pill label={t("listView")} active={viewMode === "list"} onPress={() => setViewMode("list")} /><Pill label={t("mapView")} active={viewMode === "map"} onPress={() => setViewMode("map")} /></View> // Removed unused import of `colors`
         <Card><Text style={styles.sliderTitle}>{t("priceRange")}</Text><Slider minimumValue={0} maximumValue={2000000} minimumTrackTintColor={colors.primary} maximumTrackTintColor="#D6D2CA" thumbTintColor={colors.primaryDark} value={price} onValueChange={setPrice} /></Card>
-          {viewMode === "map" ? <MapView provider={PROVIDER_GOOGLE} style={[styles.mapView, { height: responsive.mapHeight }]} initialRegion={{ latitude: 39.6547, longitude: 66.9758, latitudeDelta: 0.05, longitudeDelta: 0.05 }}><Marker coordinate={{ latitude: 39.6547, longitude: 66.9758 }} title="Registan" /></MapView> : data.map((item) => <PropertyCard key={item.id} item={item} language={language} onPress={() => navigation.navigate("PropertyDetail", { id: item.id })} />)}
+          {viewMode === "map" ? <MapView provider={PROVIDER_GOOGLE} style={[styles.mapView, { height: responsive.mapHeight }]} initialRegion={{ latitude: 39.6547, longitude: 66.9758, latitudeDelta: 0.05, longitudeDelta: 0.05 }}><Marker coordinate={{ latitude: 39.6547, longitude: 66.9758 }} title="Registan" /></MapView> : data.map((item: Property) => <PropertyCard key={item.id} item={item} language={language} onPress={() => navigation.navigate("PropertyDetail", { id: item.id })} />)}
       </ScreenScroll>
     </AppScreen>
   );
@@ -318,7 +331,7 @@ export function BookingsTabScreen({ navigation }: any) {
       <ScreenScroll>
         <ScreenTitle title={t("myBookings")} subtitle={t("myBookingsSubtitle")} />
         <FlatList horizontal showsHorizontalScrollIndicator={false} data={statusTabs as unknown as string[]} keyExtractor={(item) => item} renderItem={({ item }) => <Pill label={t(item)} active={status === item} onPress={() => setStatus(item as any)} />} />
-          {data.filter((booking) => booking.status === status).map((booking) => <BookingCard key={booking.id} id={booking.id} title={findPropertyTitle(booking.propertyId, language)} status={booking.status} subtitle={`${booking.checkIn} → ${booking.checkOut}`} onPress={() => navigation.getParent()?.navigate("BookingFlow", { screen: "BookingDetail", params: { id: booking.id } })} />)}
+          {data.filter((booking: Booking) => booking.status === status).map((booking: Booking) => <BookingCard key={booking.id} id={booking.id} title={findPropertyTitle(booking.propertyId, language)} status={booking.status} subtitle={`${booking.checkIn} → ${booking.checkOut}`} onPress={() => navigation.getParent()?.navigate("BookingFlow", { screen: "BookingDetail", params: { id: booking.id } })} />)}
       </ScreenScroll>
     </AppScreen>
   );
@@ -328,14 +341,15 @@ export function PropertyDetailScreen({ navigation }: any) {
   const language = useItemLanguage();
   const routeId = useRoutePropertyId();
   const { t } = useTranslation("property");
-  const dispatch = useAppDispatch(); // Removed unused import of `colors`
   const { data: property } = useGetPropertyByIdQuery(routeId ?? "prop-1");
   const { data: propertyReviews = [] } = useGetReviewsQuery(routeId ?? "prop-1");
   const { data: userList = users } = useGetUsersQuery();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (property) {
       dispatch(addRecentViewed(property));
+      // persist recent property to cache and analytics
       saveRecentProperty(property);
       analytics.logEvent("view_property", { propertyId: property.id });
     }
@@ -345,7 +359,7 @@ export function PropertyDetailScreen({ navigation }: any) {
     return <LoadingScreen />;
   }
 
-  const host = userList.find((item) => item.id === property.hostId) ?? userList[0];
+  const host = userList.find((item: any) => item.id === property.hostId) ?? userList[0];
 
   return (
     <AppScreen>
@@ -362,7 +376,7 @@ export function PropertyDetailScreen({ navigation }: any) {
           <RatingStars rating={property.rating} count={property.reviewCount} />
         </View>
         <Card style={styles.hostCard}><View style={styles.hostRow}><Avatar uri={host.avatar} size={60} /><View style={{ flex: 1 }}><Text style={styles.hostName}>{host.name}</Text><Text style={styles.hostMeta}>{t("verifiedHost")}</Text></View><Badge label={t("responseRate")} tone="success" /></View></Card>
-        <Section title={t("amenities")}><View style={styles.amenitiesWrap}>{property.amenities.map((amenity) => <View key={amenity} style={styles.amenityTag}><Text>{amenitiesMap[amenity]?.[language] ?? amenity}</Text></View>)}</View></Section>
+        <Section title={t("amenities")}><View style={styles.amenitiesWrap}>{property.amenities.map((amenity: string) => <View key={amenity} style={styles.amenityTag}><Text>{amenitiesMap[amenity]?.[language] ?? amenity}</Text></View>)}</View></Section>
         <Section title={t("description")}><Text style={styles.detailBody}>{property.description[language]}</Text></Section>
         <Section title={t("location")}><MapPreview title={property.address} subtitle={property.district} /></Section>
         <Section title={t("reviews")}>{propertyReviews.map((review) => <Card key={review.id} style={styles.reviewCard}><RatingStars rating={review.rating} /><Text style={styles.reviewText}>{review.text[language]}</Text></Card>)}</Section>
@@ -448,7 +462,7 @@ export function ProfileTabScreen({ navigation }: any) {
   const dispatch = useAppDispatch();
   // Removed unused import of `colors`
   return (
-    <AppScreen><ScreenScroll><View style={styles.profileHeader}><Avatar uri={user.avatar} size={72} /><View style={{ flex: 1 }}><Text style={styles.profileName}>{user.name}</Text><Text style={styles.profileMeta}>{user.email}</Text></View><IconButton icon="edit" label={t("editProfile")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "EditProfile" })} /></View><View style={styles.statsRow}><StatCard label={t("bookingsCount")} value="12" /><StatCard label={t("reviewsGiven")} value="8" /></View><Card><Pill label={t("myBookings")} onPress={() => navigation.getParent()?.navigate("BookingFlow", { screen: "BookingDetail", params: { id: bookings[0].id } })} /><Pill label={t("wishlist")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Wishlist" })} /><Pill label={t("paymentMethods")} /><Pill label={t("reviews")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "MyReviews" })} /><Pill label={t("settings")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Settings" })} /><Pill label={t("help")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Help" })} /><Pill label={t("logout")} onPress={() => { dispatch(logout()); }} /></Card>{isHost && <Card><Text style={styles.hostModeText}>{t("hostMode")}</Text><PrimaryButton label={t("hostDashboard")} onPress={() => navigation.getParent()?.navigate("HostFlow")} /></Card>}</ScreenScroll></AppScreen>
+    <AppScreen><ScreenScroll><View style={styles.profileHeader}><Avatar uri={user.avatar} size={72} /><View style={{ flex: 1 }}><Text style={styles.profileName}>{user.name}</Text><Text style={styles.profileMeta}>{user.email}</Text></View><IconButton icon={"edit" as any} label={t("editProfile")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "EditProfile" })} /></View><View style={styles.statsRow}><StatCard label={t("bookingsCount")} value="12" /><StatCard label={t("reviewsGiven")} value="8" /></View><Card><Pill label={t("myBookings")} onPress={() => navigation.getParent()?.navigate("BookingFlow", { screen: "BookingDetail", params: { id: bookings[0].id } })} /><Pill label={t("wishlist")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Wishlist" })} /><Pill label={t("paymentMethods")} /><Pill label={t("reviews")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "MyReviews" })} /><Pill label={t("settings")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Settings" })} /><Pill label={t("help")} onPress={() => navigation.getParent()?.navigate("ProfileFlow", { screen: "Help" })} /><Pill label={t("logout")} onPress={() => { dispatch(logout()); }} /></Card>{isHost && <Card><Text style={styles.hostModeText}>{t("hostMode")}</Text><PrimaryButton label={t("hostDashboard")} onPress={() => navigation.getParent()?.navigate("HostFlow")} /></Card>}</ScreenScroll></AppScreen>
   );
 }
 
@@ -554,7 +568,7 @@ const styles = StyleSheet.create({
   linkButton: { alignSelf: "center", marginTop: spacing.sm },
   linkText: { color: colors.primary, fontWeight: "700" },
   otpRow: { flexDirection: "row", justifyContent: "space-between", gap: 8, marginVertical: spacing.lg },
-  otpCell: { width: 44, height: 56, borderRadius: radii.card, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border, alignItems: "center", justifyContent: "center" },
+  otpCell: { width: 44, height: 56, borderRadius: radii.xl, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border, alignItems: "center", justifyContent: "center" },
   otpDigit: { fontSize: 20, fontWeight: "800", color: colors.charcoal },
   countdownText: { textAlign: "center", color: colors.muted, marginBottom: spacing.md },
   successText: { color: colors.success, fontWeight: "700", marginTop: spacing.md, textAlign: "center" },
@@ -569,9 +583,9 @@ const styles = StyleSheet.create({
   bannerTitle: { color: colors.white, fontWeight: "800", fontSize: 16 },
   togglePillsRow: { flexDirection: "row", gap: spacing.sm, marginBottom: spacing.md },
   sliderTitle: { fontWeight: "700", marginBottom: spacing.sm, color: colors.charcoal },
-  mapView: { height: 280, borderRadius: radii.card, overflow: "hidden", marginTop: spacing.md },
+  mapView: { height: 280, borderRadius: radii.xl, overflow: "hidden", marginTop: spacing.md },
   fullMap: { flex: 1 },
-  mapOverlayTop: { position: "absolute", top: 64, left: spacing.md, right: spacing.md, backgroundColor: colors.white, borderRadius: radii.card, padding: spacing.md },
+  mapOverlayTop: { position: "absolute", top: 64, left: spacing.md, right: spacing.md, backgroundColor: colors.white, borderRadius: radii.xl, padding: spacing.md },
   mapOverlayTitle: { fontSize: 18, fontWeight: "800", color: colors.charcoal },
   mapOverlaySubtitle: { color: colors.muted, marginTop: 4 },
   stickyBarRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },

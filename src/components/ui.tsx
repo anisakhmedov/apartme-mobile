@@ -38,7 +38,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics'; // Removed unused import of `Palette`
-import { Palette, lightPalette, darkPalette, glassTuning, GlassProfile, AppTheme, useAppTheme, colors, spacing, typography, alpha, motion, zIndex, elevation } from '@/theme';
+import { Palette, lightPalette, darkPalette, glassTuning, AppTheme, useAppTheme, colors, spacing, typography, alpha, motion, zIndex, elevation } from '@/theme';
+import type { GlassProfile } from '@/theme';
 
 import type { LocalizedText, Property } from '@/types/models'; // Removed unused import of `colors`
 
@@ -47,7 +48,7 @@ type GlassTone = 'soft' | 'regular' | 'strong';
 type GlassVariant = 'default' | 'navbar' | 'overlay' | 'sheet' | 'panel' | 'accent';
 type ButtonVariant = 'primary' | 'secondary';
 const dangerColor = '#EF4444';
-type IconName = keyof typeof Ionicons.glyphMap;
+type IconName = keyof typeof Ionicons.glyphMap | string;
 
 function getPalette(scheme: Scheme): typeof Palette {
   const palette = scheme === 'dark' ? darkPalette : lightPalette;
@@ -119,11 +120,11 @@ function getGlassProfile(
   tint?: 'light' | 'dark',
   variant?: GlassVariant
 ): GlassProfile {
-  const base = Platform.select<GlassProfile>({
-    ios: glassTuning.ios, // Removed unused import of `Palette`
+  const base = (Platform.select({
+    ios: glassTuning.ios,
     android: glassTuning.android,
     default: glassTuning.default,
-  }) ?? glassTuning.default;
+  }) as any) ?? glassTuning.default;
 
   const defaults = getVariantDefaults(variant);
 
@@ -379,7 +380,7 @@ function AppButton({
           <>
             {iconName && iconPosition === 'left' ? (
               <Ionicons
-                name={iconName}
+                name={iconName as any}
                 size={18}
                 color={isPrimary && !danger ? palette.primaryText : danger ? dangerTextColor : palette.text}
                 style={styles.buttonIconLeft}
@@ -400,7 +401,7 @@ function AppButton({
             )}
             {iconName && iconPosition === 'right' ? (
               <Ionicons
-                name={iconName}
+                name={iconName as any}
                 size={18}
                 color={isPrimary && !danger ? palette.primaryText : danger ? dangerTextColor : palette.text}
                 style={styles.buttonIconRight}
@@ -544,11 +545,12 @@ export type IconButtonProps = Omit<PressableProps, 'style'> & {
   icon: IconName;
   label?: string;
   tone?: string;
+  badge?: number;
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
 };
 
-export function IconButton({ icon, label, tone, style, contentStyle, ...pressableProps }: IconButtonProps) {
+export function IconButton({ icon, label, tone, badge, style, contentStyle, ...pressableProps }: IconButtonProps) {
   const scheme = (useColorScheme() ?? 'light') as Scheme;
   const palette = scheme === 'dark' ? darkPalette : lightPalette; // Directly use imported palettes
   const resolvedTone = tone ?? palette.text;
@@ -566,7 +568,8 @@ export function IconButton({ icon, label, tone, style, contentStyle, ...pressabl
         style={[styles.iconButtonGlass, { borderColor: palette.borderSoft }]}
         contentStyle={[styles.iconButtonContent, contentStyle]}
       >
-        <Ionicons name={icon} size={18} color={resolvedTone} />
+        <Ionicons name={icon as any} size={18} color={resolvedTone} />
+        {typeof badge === 'number' ? <Text style={[styles.iconButtonBadge, { color: '#FFFFFF' }]}>{badge}</Text> : null}
         {label ? <Text style={[styles.iconButtonLabel, { color: resolvedTone }]}>{label}</Text> : null}
       </GlassContainer>
     </Pressable>
@@ -628,7 +631,7 @@ export function TextField({
             <View style={styles.textFieldAccessory}>
               {isPassword && (
                 <Pressable onPress={() => setIsPasswordVisible(!isPasswordVisible)} hitSlop={10} style={{ paddingRight: 4 }}>
-                  <Ionicons name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'} size={20} color={palette.textMuted} />
+                  <Ionicons name={(isPasswordVisible ? 'eye-off-outline' : 'eye-outline') as any} size={20} color={palette.textMuted} />
                 </Pressable>
               )}
               {rightAccessory}
@@ -656,26 +659,13 @@ export function EmptyState({ title, description, action, icon = 'folder-open-out
 
   return (
     <Card radius={28} tone="strong" contentStyle={[styles.emptyState, style]}>
-      <Ionicons name={icon} size={34} color={palette.textMuted} />
+      <Ionicons name={icon as any} size={34} color={palette.textMuted} />
       <Text style={[styles.emptyStateTitle, { color: palette.text }]}>{title}</Text>
       {description ? <Text style={[styles.emptyStateDescription, { color: palette.textMuted }]}>{description}</Text> : null}
       {action ? <View style={styles.emptyStateAction}>{action}</View> : null}
     </Card>
   );
 }
-
-export type FilterChipProps = PillProps;
-
-export function FilterChip(props: FilterChipProps) {
-  return <Pill {...props} />;
-}
-
-export type GradientCardProps = PropsWithChildren<{
-  colors: readonly [string, string, ...string[]];
-  style?: StyleProp<ViewStyle>;
-  contentStyle?: StyleProp<ViewStyle>;
-  radius?: number;
-}>;
 
 export function GradientCard({ colors, style, contentStyle, radius = 24, children }: GradientCardProps) {
   return (
@@ -918,7 +908,7 @@ export function ToggleRow({ label, value, onToggle, style }: ToggleRowProps) {
 
 export type AmenitiesGridProps = {
   amenities: string[];
-  language?: string;
+  language?: keyof LocalizedText;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -1001,12 +991,16 @@ export function GalleryStrip({ photos, style }: GalleryStripProps) {
 
 export type ContactCTAProps = {
   price: ReactNode;
+  caption?: ReactNode;
+  primaryLabel?: string;
+  onPrimaryPress?: () => void;
+  actions?: Array<{ icon: IconName; label: string; onPress: () => void }>;
   onBook?: () => void;
   onMessage?: () => void;
   style?: StyleProp<ViewStyle>;
 };
 
-export function ContactCTA({ price, onBook, onMessage, style }: ContactCTAProps) {
+export function ContactCTA({ price, caption, primaryLabel, onPrimaryPress, actions, onBook, onMessage, style }: ContactCTAProps) {
   const scheme = (useColorScheme() ?? 'light') as Scheme;
   const palette = scheme === 'dark' ? darkPalette : lightPalette; // Directly use imported palettes
 
@@ -1015,10 +1009,17 @@ export function ContactCTA({ price, onBook, onMessage, style }: ContactCTAProps)
       <View style={styles.contactCtaTop}>
         <Text style={[styles.contactCtaLabel, { color: palette.textMuted }]}>Price</Text>
         <Text style={[styles.contactCtaPrice, { color: palette.text }]}>{price}</Text>
+        {caption ? <Text style={[styles.contactCtaLabel, { color: palette.textMuted }]}>{caption}</Text> : null}
       </View>
       <View style={styles.contactCtaButtons}>
-        <SecondaryButton label="Message" onPress={onMessage} style={styles.contactCtaButton} />
-        <PrimaryButton label="Book now" onPress={onBook} style={styles.contactCtaButton} />
+        {actions?.length ? (
+          actions.map((action) => <SecondaryButton key={action.label} label={action.label} onPress={action.onPress} style={styles.contactCtaButton} />)
+        ) : (
+          <>
+            <SecondaryButton label="Message" onPress={onMessage} style={styles.contactCtaButton} />
+            <PrimaryButton label={primaryLabel ?? "Book now"} onPress={onPrimaryPress ?? onBook} style={styles.contactCtaButton} />
+          </>
+        )}
       </View>
     </GlassContainer>
   );
@@ -1067,7 +1068,7 @@ export function SearchBar({
       style={[styles.searchBarContainer, containerStyle]}
       contentStyle={styles.searchBarContent}
     >
-      <Ionicons name={leadingIcon} size={18} color={palette.textMuted} style={styles.searchIcon} />
+      <Ionicons name={leadingIcon as any} size={18} color={palette.textMuted} style={styles.searchIcon} />
       <TextInput
         {...textInputProps}
         editable={editable}
@@ -1310,30 +1311,38 @@ export function Pill({ label, active = false, icon, onPress, style, textStyle, t
         ]}
         contentStyle={styles.pillContent}
       >
-        {icon ? <Ionicons name={icon} size={16} color={active ? palette.primary : palette.textMuted} /> : null}
+        {icon ? <Ionicons name={icon as any} size={16} color={active ? palette.primary : palette.textMuted} /> : null}
         <Text style={[styles.pillText, { color: active ? palette.primary : palette.text }, textStyle]}>{label}</Text>
       </GlassContainer>
     </Pressable>
   );
 }
 
+export const FilterChip = Pill;
+
+export type GradientCardProps = PropsWithChildren<{
+  colors: readonly [string, string, ...string[]];
+  style?: StyleProp<ViewStyle>;
+  contentStyle?: StyleProp<ViewStyle>;
+  radius?: number;
+}>;
+
 export type PropertyCardProps = {
   item: Property;
-  language: string;
+  language: keyof LocalizedText;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
   testID?: string;
 };
 
-function resolvePropertyText(property: Property, key: 'title' | 'description', language: string) {
+function resolvePropertyText(property: Property, key: 'title' | 'description', language: keyof LocalizedText) {
   const dictionary = property[key] as LocalizedText | undefined;
   if (!dictionary) {
     return '';
   }
 
-  const localizedKey = language as keyof LocalizedText;
-  return dictionary[localizedKey] ?? dictionary.en ?? Object.values(dictionary)[0] ?? '';
+  return dictionary[language] ?? dictionary.en ?? Object.values(dictionary)[0] ?? '';
 }
 
 export const PropertyCard = React.memo(({ item, language, onPress, style, contentStyle, testID }: PropertyCardProps) => {
@@ -1812,6 +1821,17 @@ const styles = StyleSheet.create({
   iconButtonLabel: {
     fontSize: 13,
     fontWeight: '600',
+  },
+  iconButtonBadge: {
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    paddingHorizontal: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: dangerColor,
+    fontSize: 11,
+    fontWeight: '700',
   },
   textFieldWrap: {
     gap: 8,

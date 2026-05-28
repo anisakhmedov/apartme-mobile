@@ -30,7 +30,7 @@ const createStyles = (theme: AppTheme) =>
       width: 220,
       height: 220,
       borderRadius: 110,
-      backgroundColor: theme.colors.ambientTop,
+      backgroundColor: alpha(theme.colors.primary, (theme.mode as string) === "dark" ? 0.06 : 0.08),
     },
     ambientBottom: {
       position: "absolute",
@@ -39,7 +39,7 @@ const createStyles = (theme: AppTheme) =>
       width: 280,
       height: 280,
       borderRadius: 140,
-      backgroundColor: theme.colors.ambientBottom,
+      backgroundColor: alpha(theme.colors.accent, (theme.mode as string) === "dark" ? 0.06 : 0.08),
     },
     scrollContent: {
       paddingTop: spacing.md,
@@ -93,7 +93,7 @@ const createStyles = (theme: AppTheme) =>
       borderColor: theme.colors.border, // Kept theme.colors.border
       overflow: "hidden",
       marginBottom: spacing.lg,
-      ...theme.elevation.card,
+      ...(theme.elevation.card as any),
     },
     menuItem: {
       minHeight: 58,
@@ -164,7 +164,7 @@ const createStyles = (theme: AppTheme) =>
       justifyContent: "center",
       borderWidth: 1,
       borderColor: theme.colors.glassBorderStrong,
-      backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.54),
+      backgroundColor: alpha(theme.colors.surface, (theme.mode as string) === "dark" ? 0.08 : 0.54),
     },
     hostActionPrimary: {
       backgroundColor: theme.colors.primary,

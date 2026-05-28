@@ -305,6 +305,12 @@ export const typography = {
   overline:   { fontSize: 10, lineHeight: 12, fontWeight: "600" as const, letterSpacing: 1.6, textTransform: "uppercase" as const },
   code:       { fontSize: 14, lineHeight: 24, fontWeight: "400", fontFamily: "JetBrains Mono, Fira Code, monospace" },
   numeric:    { fontSize: 16, lineHeight: 24, fontWeight: "600" as const },
+  // Backwards-compatible aliases
+  title:      { fontSize: 36, lineHeight: 44, fontWeight: "700" as const, letterSpacing: -0.24, fontFamily: "Cal Sans, Inter, sans-serif" },
+  subheading: { fontSize: 20, lineHeight: 28, fontWeight: "600" as const },
+  bodyStrong: { fontSize: 16, lineHeight: 24, fontWeight: "600" as const },
+  micro:      { fontSize: 11, lineHeight: 16, fontWeight: "400" as const },
+  heroPrice:  { fontSize: 28, lineHeight: 34, fontWeight: "800" as const },
 };
 
 // Named export alias for text styles
@@ -426,6 +432,9 @@ export const borderRadius = {
   "4xl":   48,
   full:    9999,
   pill:    9999,
+  card:    22,
+  modal:   28,
+  round:   9999,
   circle:  "50%",
 };
 export const radii = borderRadius;
@@ -477,13 +486,15 @@ export const elevation = {
   2:         shadows.sm,
   3:         shadows.DEFAULT,
   4:         shadows.md,
+  soft:      { shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 },
   6:         shadows.lg,
   8:         shadows.xl,
   12:        shadows["2xl"],
   16:        shadows["3xl"],
+  floating:  { shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.12, shadowRadius: 16, elevation: 8 },
   inset:     shadows.inner,
   focus:     shadows.focus,
-  card:      shadows.card,
+  card:      { shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 4 },
   cardHover: shadows.cardHover,
   dropdown:  shadows.dropdown,
   modal:     shadows.modal,
@@ -571,6 +582,8 @@ export const motion = {
   color:   "color 200ms ease, background-color 200ms ease, border-color 200ms ease",
   layout:  "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
   reduced: "none",
+  // numeric shorthand used by components expecting milliseconds
+  standard: 200,
 };
 
 // ─── ANIMATIONS ──────────────────────────────────────────────
@@ -743,6 +756,26 @@ export const lightPalette = {
   error: colors.error.DEFAULT, errorLight: colors.error.light,
   info: colors.info.DEFAULT, infoLight: colors.info.light,
   white: "#ffffff", black: "#000000", transparent: "transparent",
+  // Compatibility aliases used across screens/components
+  surfaceSecondary: colors.surface.raised,
+  ambientTop: colors.primary[200],
+  ambientBottom: colors.accent[200],
+  glassBorderStrong: colors.border.strong,
+  glassBorder: colors.border.DEFAULT,
+  glassShell: "rgba(255,255,255,0.2)",
+  glassAccent: "rgba(99,102,241,0.1)",
+  primaryBorder: colors.primary.DEFAULT,
+  // UI palette extras
+  text: colors.text.primary,
+  textMuted: colors.text.tertiary,
+  surfaceStrong: colors.surface.raised,
+  inputBackground: colors.surface.DEFAULT,
+  borderSoft: colors.border.light,
+  primaryText: colors.white,
+  primarySoft: alpha(colors.primary.DEFAULT, 0.14),
+  shadow: shadows.card,
+  backdrop: colors.background.overlay,
+  badgeNew: colors.accent.DEFAULT,
 };
 
 export const darkPalette = {
@@ -761,9 +794,38 @@ export const darkPalette = {
   error: colors.error.DEFAULT, errorLight: colors.error.dark,
   info: colors.info.DEFAULT, infoLight: colors.info.dark,
   white: "#ffffff", black: "#000000", transparent: "transparent",
+  // Compatibility aliases used across screens/components
+  surfaceSecondary: colors.dark.surface.raised,
+  ambientTop: colors.primary[700],
+  ambientBottom: colors.accent[700],
+  glassBorderStrong: colors.dark.border.strong,
+  glassBorder: colors.dark.border.DEFAULT,
+  glassShell: "rgba(0,0,0,0.2)",
+  glassAccent: "rgba(99,102,241,0.1)",
+  primaryBorder: colors.primary[700],
+  // UI palette extras
+  text: colors.dark.text.primary,
+  textMuted: colors.dark.text.tertiary,
+  surfaceStrong: colors.dark.surface.raised,
+  inputBackground: colors.dark.surface.DEFAULT,
+  borderSoft: colors.dark.border.light,
+  primaryText: colors.white,
+  primarySoft: alpha(colors.primary.DEFAULT, 0.12),
+  shadow: shadows.card,
+  backdrop: colors.dark.background.overlay,
+  badgeNew: colors.accent[400] ?? colors.accent.DEFAULT,
 };
 
 export const Palette = lightPalette;
+
+export type Palette = typeof lightPalette;
+
+ export type GlassProfile = {
+   blurIntensity: number;
+   overlayOpacity: number;
+   borderOpacity: number;
+   tint: 'light' | 'dark';
+ };
 
 // ─── GLASS TUNING ────────────────────────────────────────────
 
@@ -778,9 +840,13 @@ export const glassTuning = {
     primary: "rgba(99,102,241,0.1)", primaryMd: "rgba(99,102,241,0.2)",
   },
   shadow: { sm: "0 2px 12px rgba(0,0,0,0.08)", md: "0 4px 24px rgba(0,0,0,0.12)", lg: "0 8px 40px rgba(0,0,0,0.18)", xl: "0 16px 64px rgba(0,0,0,0.25)" },
+  // Platform defaults for GlassProfile
+  ios: { blurIntensity: 16, overlayOpacity: 0.12, borderOpacity: 0.12, tint: "light" },
+  android: { blurIntensity: 12, overlayOpacity: 0.1, borderOpacity: 0.1, tint: "dark" },
+  default: { blurIntensity: 14, overlayOpacity: 0.11, borderOpacity: 0.11, tint: "light" },
 };
 
-export const GlassProfile = {
+export const GlassProfiles = {
   light:   { background: glassTuning.background.whiteMedium,  backdropFilter: "blur(16px) saturate(1.4)", WebkitBackdropFilter: "blur(16px) saturate(1.4)", border: "1px solid rgba(255,255,255,0.18)", boxShadow: glassTuning.shadow.md },
   dark:    { background: glassTuning.background.darkMedium,   backdropFilter: "blur(16px) saturate(1.4)", WebkitBackdropFilter: "blur(16px) saturate(1.4)", border: "1px solid rgba(0,0,0,0.1)",          boxShadow: glassTuning.shadow.md },
   frosted: { background: glassTuning.background.whiteStrong,  backdropFilter: "blur(40px) saturate(1.8)", WebkitBackdropFilter: "blur(40px) saturate(1.8)", border: "1px solid rgba(255,255,255,0.25)",   boxShadow: glassTuning.shadow.lg },
@@ -840,23 +906,43 @@ const BaseTheme = {
   borderRadius, borderWidth, shadows, elevation, gradients, opacity, zIndex,
   transitions, motion, animations, sizes, layout, componentVariants, tokens,
   themePresets, Palette, radii,
-  glassTuning, GlassProfile, cursors, blur, backdropBlur,
+  glassTuning, GlassProfiles, cursors, blur, backdropBlur,
   overflow, aspectRatios, listStyleType, alpha,
 };
 
 export const lightTheme = {
   ...BaseTheme,
   colors: lightPalette,
+  navigation: {
+    colors: {
+      primary: lightPalette.primary,
+      background: lightPalette.background,
+      card: lightPalette.surface,
+      text: lightPalette.text,
+      border: lightPalette.border,
+      notification: lightPalette.accent,
+    },
+  },
   mode: 'light' as const,
 };
 
 export const darkTheme = {
   ...BaseTheme,
   colors: darkPalette,
+  navigation: {
+    colors: {
+      primary: darkPalette.primary,
+      background: darkPalette.background,
+      card: darkPalette.surface,
+      text: darkPalette.text,
+      border: darkPalette.border,
+      notification: darkPalette.accent,
+    },
+  },
   mode: 'dark' as const,
 };
 
-export type AppTheme = typeof lightTheme;
+export type AppTheme = typeof lightTheme | typeof darkTheme;
 
 /** @deprecated Use useAppTheme hook instead for dynamic values */
 export const AppTheme = lightTheme;

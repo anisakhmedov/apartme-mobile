@@ -12,7 +12,7 @@ import { useNavigation, type NavigationProp } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 
-import { colors } from "@/theme";
+import { Palette as colors } from "@/theme";
 import { PrimaryButton, SecondaryButton } from "@/components/ui";
 import { useResponsive } from "@/components/ui";
 
@@ -28,13 +28,15 @@ interface Slide {
   illustration: string;
 }
 
-// Define a type for your navigation stack if you have one
-// For example: type RootStackParamList = { Login: undefined; Register: undefined; };
-// Then use useNavigation<NavigationProp<RootStackParamList>>();
+type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  Onboarding: undefined;
+};
 
 export function OnboardingScreen() {
   const { t } = useTranslation("auth");
-  const navigation = useNavigation(); // Using `any` for simplicity, consider defining a proper type
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useSharedValue(0);
   const responsive = useResponsive();

@@ -87,7 +87,7 @@ const createStyles = (theme: ChatTheme) =>
       borderRadius: 999,
       backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.1 : 0.72),
       borderWidth: 1,
-      borderColor: theme.colors.glassBorderStrong, // Kept theme.colors.glassBorderStrong
+      borderColor: theme.colors.borderStrong,
       marginBottom: spacing.sm,
     },
     dayChipText: {
@@ -107,26 +107,26 @@ const createStyles = (theme: ChatTheme) =>
       paddingVertical: spacing.sm,
     },
     bubbleMine: {
-      backgroundColor: theme.colors.primary, // Kept theme.colors.primary
+      backgroundColor: theme.colors.primary,
       borderBottomRightRadius: 8,
-      ...elevation.soft,
+      ...(elevation.card as any),
     },
     bubbleTheirs: {
       backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.18 : 0.88),
       borderWidth: 1,
-      borderColor: theme.colors.glassBorderStrong, // Kept theme.colors.glassBorderStrong
+      borderColor: theme.colors.borderStrong,
       borderBottomLeftRadius: 8,
     },
     bubbleText: {
       ...typography.body,
       lineHeight: 21,
-      color: theme.colors.textPrimary, // Kept theme.colors.textPrimary
+      color: theme.colors.textPrimary,
     },
     bubbleTextMine: {
-      color: theme.colors.white, // Kept theme.colors.white
+      color: theme.colors.white,
     },
     bubbleMeta: {
-      ...typography.micro,
+      ...typography.caption,
       marginTop: 6,
       color: alpha(theme.colors.textSecondary, 0.92),
     },
@@ -134,7 +134,7 @@ const createStyles = (theme: ChatTheme) =>
       color: alpha(theme.colors.white, 0.78),
     },
     composerWrap: {
-      position: "absolute", // Kept theme.spacing.md
+      position: "absolute",
       left: spacing.md,
       right: spacing.md,
     },
@@ -142,8 +142,8 @@ const createStyles = (theme: ChatTheme) =>
       borderRadius: 24,
     },
     composerContent: {
-      padding: spacing.sm, // Kept theme.spacing.sm
-      flexDirection: "row", // Kept theme.spacing.sm
+      padding: spacing.sm,
+      flexDirection: "row",
       alignItems: "flex-end",
       gap: theme.spacing.sm,
     },
@@ -153,10 +153,10 @@ const createStyles = (theme: ChatTheme) =>
       borderRadius: 22,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.62), // Kept theme.colors.glassBorderStrong
+      backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.62),
       borderWidth: 1,
-      borderColor: theme.colors.glassBorderStrong,
-    }, // Kept theme.spacing.md
+      borderColor: theme.colors.borderStrong,
+    },
     composerInputWrap: {
       flex: 1,
       minHeight: 52,
@@ -164,12 +164,12 @@ const createStyles = (theme: ChatTheme) =>
       borderRadius: 20,
       backgroundColor: alpha(theme.colors.surface, theme.mode === "dark" ? 0.08 : 0.68),
       borderWidth: 1,
-      borderColor: theme.colors.glassBorderStrong, // Kept theme.colors.glassBorderStrong
+      borderColor: theme.colors.borderStrong,
       paddingHorizontal: spacing.md,
       paddingVertical: 12,
       justifyContent: "center",
     },
-    composerInput: { // Kept theme.colors.textPrimary
+    composerInput: {
       ...theme.typography.body,
       color: theme.colors.textPrimary,
       padding: 0,
@@ -180,9 +180,11 @@ const createStyles = (theme: ChatTheme) =>
       height: 48,
       borderRadius: 24,
       alignItems: "center",
-      justifyContent: "center", // Kept theme.colors.primary
-      backgroundColor: theme.colors.primary, // Kept theme.elevation.soft
-      ...elevation.soft,
+      justifyContent: "center",
+      backgroundColor: theme.colors.primary,
+      ...(typeof elevation.button === "object"
+        ? elevation.button
+        : { elevation: Number(elevation.button) }),
     },
   });
 
@@ -232,7 +234,7 @@ export function ChatThreadScreen() {
         keyboardVerticalOffset={Platform.OS === "ios" ? 12 : 0}
       >
         <Animated.View
-          entering={FadeIn.duration(theme.motion.standard)}
+          entering={FadeIn.duration(400)}
           style={{ paddingTop: Math.max(insets.top + 8, 18) }}
         >
           <GlassContainer variant="navbar" style={styles.header}>
@@ -274,7 +276,7 @@ export function ChatThreadScreen() {
           {demoMessages.map((message, index) => (
             <Animated.View
               key={message.id}
-              entering={FadeInUp.delay(index * 50).duration(theme.motion.standard)}
+              entering={FadeInUp.delay(index * 50).duration(Number(theme.motion.duration.normal))}
               style={message.mine ? styles.bubbleRowMine : styles.bubbleRowTheirs}
             >
               <View style={[styles.bubble, message.mine ? styles.bubbleMine : styles.bubbleTheirs]}>
@@ -286,7 +288,7 @@ export function ChatThreadScreen() {
         </ScrollView>
 
         <Animated.View
-          entering={FadeInDown.delay(80).duration(theme.motion.standard)}
+          entering={FadeInDown.delay(80).duration(400)}
           style={[styles.composerWrap, { bottom: Math.max(insets.bottom + 12, 16) }]}
         >
           <GlassContainer variant="navbar" style={styles.composer}>

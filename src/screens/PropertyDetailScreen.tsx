@@ -13,7 +13,7 @@ import { useAppDispatch } from "@/store";
 import { analytics } from "@/services/analytics";
 import { saveRecentProperty } from "@/services/cache"; // Removed unused import of `colors`
 import { useGetPropertyByIdQuery, useGetReviewsQuery } from "@/services/api";
-import { alpha, AppTheme, darkTheme, lightTheme, spacing, typography, useAppTheme } from "@/theme";
+import { alpha, AppTheme, darkTheme, elevation, lightTheme, spacing, typography, useAppTheme } from "@/theme";
 import {
   AmenitiesGrid,
   Avatar,
@@ -28,7 +28,7 @@ import {
   RatingStars,
   formatCurrency,
 } from "@/components/ui";
-import { useItemLanguage } from "./index";
+import { useItemLanguage } from "./index.tsx";
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -403,7 +403,6 @@ export function PropertyDetailScreen() {
       <View style={[styles.ctaBar, { bottom: Math.max(insets.bottom + 10, 16) }]}>
         <ContactCTA
           price={formatCurrency(currentProperty.price, currentProperty.currency)}
-          caption={currentProperty.type === "daily" ? "per night - clear pricing before booking" : "per month - clear pricing before booking"}
           primaryLabel={t("property:bookNow")}
           onPrimaryPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

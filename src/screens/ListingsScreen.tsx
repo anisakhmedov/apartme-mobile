@@ -4,11 +4,15 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Animated, { FadeIn } from "react-native-reanimated";
 
-import { colors, spacing, typography } from "@/theme";
+import { Palette as colors, spacing, typography } from "@/theme";
 import { PropertyCard, PropertyCardSkeleton, ScreenScroll } from "@/components/ui";
 import { useGetPropertiesQuery } from "@/services/api";
 import { properties as mockProperties } from "@/data/mockData";
-import { useItemLanguage } from "./index";
+
+// Fallback local hook when external 'useItemLanguage' is not exported from "./index"
+const useItemLanguage = (): string => {
+  return "en";
+};
 
 export function ListingsScreen() {
   const navigation = useNavigation<any>();

@@ -5,6 +5,7 @@ export interface LocalizedText {
   ru: string;
   en: string;
   uz: string;
+  [key: string]: string;
 }
 
 export interface Coordinate {

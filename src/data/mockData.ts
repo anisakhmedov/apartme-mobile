@@ -1,4 +1,5 @@
 import { Booking, DistrictOption, Message, NotificationItem, Property, Review, User } from "@/types/models";
+import { LocalizedText } from '@/types/models';
 
 export const districts: DistrictOption[] = [
   { id: "registan", label: { ru: "Регистанский район", en: "Registan District", uz: "Registon tumani" } },
@@ -202,7 +203,7 @@ export const notifications: NotificationItem[] = [
   }
 ];
 
-export const amenitiesMap: Record<string, { ru: string; en: string; uz: string }> = {
+export const amenitiesMap: Record<string, LocalizedText> = {
   wifi: { ru: "Wi‑Fi", en: "Wi‑Fi", uz: "Wi-Fi" },
   ac: { ru: "Кондиционер", en: "Air conditioning", uz: "Konditsioner" },
   kitchen: { ru: "Кухня", en: "Kitchen", uz: "Oshxona" },

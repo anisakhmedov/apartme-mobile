@@ -4,11 +4,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
-import { colors, spacing, typography } from "@/theme";
+import { Palette as colors, spacing, typography } from "@/theme";
 import { BookingCard, Section, Pill, ScreenScroll } from "@/components/ui";
 import { useGetBookingsQuery } from "@/services/api";
 import { bookings as mockBookings } from "@/data/mockData";
-import { useItemLanguage } from "./index";
 
 const statusTabs = ["upcoming", "active", "completed", "cancelled"] as const;
 
@@ -16,7 +15,6 @@ export function MyBookingsScreen() {
   const navigation = useNavigation<any>();
   const [status, setStatus] = useState<(typeof statusTabs)[number]>("upcoming");
   const { data = mockBookings } = useGetBookingsQuery();
-  const language = useItemLanguage();
   const tabBarHeight = useBottomTabBarHeight();
 
   const filteredBookings = useMemo(() => {

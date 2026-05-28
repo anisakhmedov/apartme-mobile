@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 
-import { colors, spacing, typography } from "@/theme";
+import { Palette as colors, spacing, typography } from "@/theme";
 import { ScreenScroll, InfoRow, PrimaryButton, SecondaryButton } from "@/components/ui";
 import { bookings } from "@/data/mockData";
 
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   infoCard: {
-    backgroundColor: colors.surface.DEFAULT, // Kept colors.surface
+    backgroundColor: colors.surface, // Kept colors.surface
     borderRadius: 12, // Kept 12
     padding: spacing.md, // Kept spacing.md
     marginBottom: 24, // Kept 24

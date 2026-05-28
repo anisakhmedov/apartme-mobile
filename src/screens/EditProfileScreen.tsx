@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { colors, spacing, typography } from "@/theme";
+import { Palette as colors, spacing, typography } from "@/theme";
 import { TextField, PrimaryButton, SecondaryButton, ScreenScroll } from "@/components/ui";
 import { users } from "@/data/mockData";
 

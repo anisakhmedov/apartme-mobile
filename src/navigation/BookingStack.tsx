@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { BookingConfirmationScreen, BookingDetailScreen, BookingScreen, PaymentScreen } from "@/screens";
+import { BookingConfirmationScreen, BookingDetailScreen, BookingScreen, PaymentScreen } from "../screens/index.tsx";
 
 const Stack = createNativeStackNavigator();
 

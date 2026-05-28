@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 
-import { colors, spacing, typography } from "@/theme";
+import { Palette as colors, spacing, typography } from "@/theme";
 import { Card, ScreenScroll, SecondaryButton } from "@/components/ui";
 
 export function MyReviewsScreen() {

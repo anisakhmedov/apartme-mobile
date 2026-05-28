@@ -96,7 +96,7 @@ export function PaymentScreen() {
   const insets = useSafeAreaInsets();
   const params = route.params || {};
   const theme = useAppTheme();
-  const styles = useMemo(() => createStyles(theme), [theme]);
+  const styles = useMemo(() => createStyles(theme as any), [theme]);
 
   const [loading, setLoading] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("card");
@@ -133,7 +133,7 @@ export function PaymentScreen() {
       <Animated.View entering={FadeIn.duration(300)} style={{ paddingTop: Math.max(insets.top, theme.spacing.xs) }}>
         <GlassContainer variant="navbar" style={styles.topBar}>
           <View style={styles.topBarContent}>
-            <IconButton icon="arrow-back-ios-new" label="Назад" onPress={() => navigation.goBack()} />
+            <IconButton icon="arrow-back" label="Назад" onPress={() => navigation.goBack()} />
             <Text style={styles.topBarTitle}>Оплата</Text>
           </View>
         </GlassContainer>
